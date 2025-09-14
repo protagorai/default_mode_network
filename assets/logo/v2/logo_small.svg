@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5CC"/>
+      <stop offset="50%" stop-color="#4A90E2"/>
+      <stop offset="100%" stop-color="#9932CC"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="#0D0D0D"/>
+  <g filter="url(#glow)" stroke="url(#g1)" stroke-width="3" stroke-linecap="round">
+    <!-- Simplified gyri ribbons -->
+    <path d="M130,135 C170,120 215,120 255,135" fill="none"/>
+    <path d="M125,155 C170,140 220,142 265,158" fill="none"/>
+    <path d="M120,175 C170,160 225,162 272,178" fill="none"/>
+    <!-- Parietal fan -->
+    <path d="M300,150 L330,160 L350,185 L330,200 L300,190 Z" fill="none"/>
+    <!-- Temporal arcs -->
+    <path d="M150,210 C180,220 210,230 235,250" fill="none"/>
+    <path d="M148,230 C178,238 205,250 225,270" fill="none"/>
+    <!-- Occipital fan -->
+    <path d="M350,175 C368,190 380,210 382,228" fill="none"/>
+    <!-- Brainstem -->
+    <path d="M180,270 C195,290 210,312 225,335 C240,365 252,395 262,425" fill="none"/>
+    <!-- Nodes -->
+    <circle cx="165" cy="140" r="4" fill="#00E5CC"/>
+    <circle cx="210" cy="150" r="4" fill="#00E5CC"/>
+    <circle cx="255" cy="160" r="4" fill="#00E5CC"/>
+    <circle cx="300" cy="170" r="4" fill="#00E5CC"/>
+    <circle cx="340" cy="188" r="4" fill="#00E5CC"/>
+  </g>
+</svg>

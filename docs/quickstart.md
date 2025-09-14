@@ -5,15 +5,16 @@ This guide will walk you through the essential steps to get started with the SDM
 ## Table of Contents
 
 1. [Installation and Setup](#installation-and-setup)
-2. [Basic Concepts](#basic-concepts)
-3. [Creating Your First Neuron](#creating-your-first-neuron)
-4. [Building Simple Networks](#building-simple-networks)
-5. [Adding Feedback Loops](#adding-feedback-loops)
-6. [Monitoring with Probes](#monitoring-with-probes)
-7. [Running Simulations](#running-simulations)
-8. [Visualizing Results](#visualizing-results)
-9. [Advanced Examples](#advanced-examples)
-10. [Debugging and Analysis](#debugging-and-analysis)
+2. [Running Example Simulations](#running-example-simulations)
+3. [Basic Concepts](#basic-concepts)
+4. [Creating Your First Neuron](#creating-your-first-neuron)
+5. [Building Simple Networks](#building-simple-networks)
+6. [Adding Feedback Loops](#adding-feedback-loops)
+7. [Monitoring with Probes](#monitoring-with-probes)
+8. [Running Simulations](#running-simulations)
+9. [Visualizing Results](#visualizing-results)
+10. [Advanced Examples](#advanced-examples)
+11. [Debugging and Analysis](#debugging-and-analysis)
 
 ## Installation and Setup
 
@@ -50,6 +51,222 @@ pip install -r dev-requirements.txt
 
 # Set Python path
 export PYTHONPATH="${PWD}/src:$PYTHONPATH"
+```
+
+## Running Example Simulations
+
+The SDMN Framework comes with comprehensive examples that demonstrate all key features. These are the fastest way to see the framework in action and understand its capabilities.
+
+### Available Examples
+
+The framework includes four main examples, each building on the previous concepts:
+
+#### Example 01: Basic Neuron Demonstration
+**File:** `examples/01_basic_neuron_demo.py`
+
+Demonstrates individual neuron models (LIF and Hodgkin-Huxley) with detailed analysis of their behavior, including F-I curves, membrane dynamics, and gating variables.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/01_basic_neuron_demo.py
+
+# Local installation
+python examples/01_basic_neuron_demo.py
+```
+
+**What you'll see:**
+- LIF neuron membrane potential traces
+- Hodgkin-Huxley action potential shapes
+- Frequency-current (F-I) relationship analysis
+- Comparison of different neuron models
+
+#### Example 02: Network Topologies
+**File:** `examples/02_network_topologies.py`
+
+Explores different network architectures (random, ring, small-world, grid) and their impact on network dynamics and connectivity patterns.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/02_network_topologies.py
+
+# Local installation
+python examples/02_network_topologies.py
+```
+
+**What you'll see:**
+- Comparison of network topologies
+- Network connectivity statistics
+- Spike raster plots for different architectures
+- Population activity patterns
+
+#### Example 03: Probe Monitoring System
+**File:** `examples/03_probe_monitoring.py`
+
+Comprehensive demonstration of the monitoring system, showing voltage probes, spike detection, population activity, and synthetic EEG generation.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/03_probe_monitoring.py
+
+# Local installation  
+python examples/03_probe_monitoring.py
+```
+
+**What you'll see:**
+- High-resolution voltage monitoring
+- Spike raster plots and firing rate analysis
+- Population-level brain wave patterns
+- Local field potential (LFP) simulation
+- Comprehensive frequency domain analysis
+
+#### Example 04: Default Mode Networks (⭐ Core Feature)
+**File:** `examples/04_default_mode_networks.py`
+
+**This is the centerpiece example** - demonstrates the framework's main purpose: creating synthetic default mode networks with brain-like oscillations and realistic frequency content.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/04_default_mode_networks.py
+
+# Local installation
+python examples/04_default_mode_networks.py
+```
+
+**What you'll see:**
+- Biologically-inspired multi-regional brain network
+- Synthetic brain waves with realistic EEG frequency bands
+- Default mode network connectivity patterns  
+- Network synchronization and oscillations
+- Comprehensive brain wave analysis (Delta, Theta, Alpha, Beta, Gamma)
+
+#### Quickstart Simulation (Interactive)
+**File:** `examples/quickstart_simulation.py`
+
+A complete working example that combines all concepts in an interactive demonstration.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/quickstart_simulation.py
+
+# Or use the shortcut
+./scripts/run.sh simulation
+```
+
+### Running Examples with Different Configurations
+
+#### Using Containers (Recommended)
+
+The containerized approach ensures all dependencies are properly installed and configured:
+
+```bash
+# Build the container (first time only)
+./scripts/build.sh
+
+# Run a specific example
+./scripts/run.sh custom python examples/01_basic_neuron_demo.py
+
+# Run with Jupyter for interactive exploration
+./scripts/run.sh jupyter
+# Then navigate to the examples/ folder in Jupyter
+```
+
+#### Local Installation
+
+Make sure you have all dependencies installed:
+
+```bash
+# Install requirements
+pip install -r requirements.txt
+
+# Set Python path
+export PYTHONPATH="${PWD}/src:$PYTHONPATH"
+
+# Run examples
+python examples/01_basic_neuron_demo.py
+python examples/02_network_topologies.py
+python examples/03_probe_monitoring.py
+python examples/04_default_mode_networks.py
+```
+
+### Understanding the Output
+
+Each example generates:
+
+1. **Console Output**: Real-time progress, statistics, and analysis results
+2. **Plots**: Saved to `output/` directory as high-resolution PNG files
+3. **Data**: Simulation results and probe data for further analysis
+
+Example output directory structure:
+```
+output/
+├── 01_neuron_comparison.png
+├── 02_network_comparison.png  
+├── 02_raster_comparison.png
+├── 03_comprehensive_monitoring.png
+└── 04_default_mode_network.png
+```
+
+### Customizing Examples
+
+All examples are well-commented and designed for modification:
+
+```python
+# In any example file, you can modify parameters:
+
+# Change simulation duration
+config = SimulationConfig(
+    dt=0.1,
+    max_time=5000.0,  # Change from 1000.0 to 5000.0 for longer simulation
+    enable_logging=True
+)
+
+# Modify network size
+n_neurons = 100  # Change from 50 to 100 for larger network
+
+# Adjust probe sampling
+sampling_interval=0.5  # Higher resolution monitoring
+```
+
+### Troubleshooting Examples
+
+**Common Issues:**
+
+1. **Import Errors**:
+   ```bash
+   # Make sure Python path is set
+   export PYTHONPATH="${PWD}/src:$PYTHONPATH"
+   ```
+
+2. **Missing Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **No Display (Headless Systems)**:
+   ```bash
+   # Examples will save plots even if display fails
+   # Check the output/ directory for generated files
+   ```
+
+4. **Slow Performance**:
+   ```bash
+   # Examples are designed to run quickly
+   # For faster execution, reduce simulation time:
+   # Edit max_time parameter in the example files
+   ```
+
+### Quick Start Recommendation
+
+**For first-time users:**
+1. Start with Example 01 to understand individual neurons
+2. Progress to Example 04 to see the full DMN capabilities
+3. Use Example 03 to understand the monitoring system
+4. Experiment with Example 02 for different network architectures
+
+**For immediate brain wave generation:**
+```bash
+# This will generate synthetic brain waves in ~30 seconds
+./scripts/run.sh custom python examples/04_default_mode_networks.py
 ```
 
 ## Basic Concepts

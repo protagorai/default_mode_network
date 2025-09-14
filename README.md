@@ -1,5 +1,11 @@
 # Synthetic Default Mode Network (SDMN) Framework
 
+<div align="center">
+  <img src="assets/logo/v2/logo.svg" width="400" height="400" alt="SDMN Framework - Triangulated Brain Network Logo">
+  <br>
+  <em>Synthetic Default Mode Network Framework</em>
+</div>
+
 A cutting-edge research framework for simulating synthetic default mode networks using artificial spiking neural networks inspired by biological neurons.
 
 ## Vision
