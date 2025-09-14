@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo/v3/logo.svg" width="256" height="256" alt="SDMN Framework - Triangulated Brain Network Logo">
+  <img src="assets/logo/logo-wave.svg" width="256" height="256" alt="SDMN Framework - Triangulated Brain Network Logo">
   <br>
   <!-- <em>Synthetic Default Mode Network Framework</em> -->
 </div>

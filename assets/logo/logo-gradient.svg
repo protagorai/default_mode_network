@@ -1,0 +1,316 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342.76 287.29">
+  <defs>
+    <!-- Dark blue shades palette -->
+    <linearGradient id="blue1"><stop stop-color="#001F3F"/></linearGradient>
+    <linearGradient id="blue2"><stop stop-color="#003366"/></linearGradient>
+    <linearGradient id="blue3"><stop stop-color="#004080"/></linearGradient>
+    <linearGradient id="blue4"><stop stop-color="#0066CC"/></linearGradient>
+    <linearGradient id="blue5"><stop stop-color="#1E90FF"/></linearGradient>
+    
+    <!-- Dark purple shades palette -->
+    <linearGradient id="purple1"><stop stop-color="#2F1B69"/></linearGradient>
+    <linearGradient id="purple2"><stop stop-color="#4B0082"/></linearGradient>
+    <linearGradient id="purple3"><stop stop-color="#6A0DAD"/></linearGradient>
+    <linearGradient id="purple4"><stop stop-color="#7B68EE"/></linearGradient>
+    <linearGradient id="purple5"><stop stop-color="#9932CC"/></linearGradient>
+    
+    <!-- Line gradients for transitions between zones -->
+    <!-- Blue to Purple transitions -->
+    <linearGradient id="blue1_to_purple1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#001F3F"/>
+      <stop offset="100%" stop-color="#2F1B69"/>
+    </linearGradient>
+    
+    <linearGradient id="purple1_to_blue2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2F1B69"/>
+      <stop offset="100%" stop-color="#003366"/>
+    </linearGradient>
+    
+    <linearGradient id="blue2_to_purple2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#003366"/>
+      <stop offset="100%" stop-color="#4B0082"/>
+    </linearGradient>
+    
+    <linearGradient id="purple2_to_blue3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4B0082"/>
+      <stop offset="100%" stop-color="#004080"/>
+    </linearGradient>
+    
+    <linearGradient id="blue3_to_purple3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#004080"/>
+      <stop offset="100%" stop-color="#6A0DAD"/>
+    </linearGradient>
+    
+    <linearGradient id="purple3_to_blue4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6A0DAD"/>
+      <stop offset="100%" stop-color="#0066CC"/>
+    </linearGradient>
+    
+    <linearGradient id="blue4_to_purple4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0066CC"/>
+      <stop offset="100%" stop-color="#7B68EE"/>
+    </linearGradient>
+    
+    <linearGradient id="purple4_to_blue5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7B68EE"/>
+      <stop offset="100%" stop-color="#1E90FF"/>
+    </linearGradient>
+    
+    <linearGradient id="blue5_to_purple5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E90FF"/>
+      <stop offset="100%" stop-color="#9932CC"/>
+    </linearGradient>
+    
+    <!-- Same-zone transitions (alternate to opposite color) -->
+    <linearGradient id="blue_to_purple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#004080"/>
+      <stop offset="100%" stop-color="#6A0DAD"/>
+    </linearGradient>
+    
+    <linearGradient id="purple_to_blue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4B0082"/>
+      <stop offset="100%" stop-color="#0066CC"/>
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <style>
+      .cls-1,.cls-2,.cls-3,.cls-4,.cls-5{filter:url(#glow);}
+      .cls-2,.cls-3,.cls-4,.cls-5,.cls-6{stroke-miterlimit:10;filter:url(#glow);}
+      .cls-2{stroke-width:4px;}
+      .cls-3{stroke-width:3px;}
+      .cls-4{stroke-width:5px;}
+      .cls-5,.cls-6{stroke-width:2px;}
+      .cls-6{fill:none;}
+      
+      /* Position-based alternating blue/purple classes */
+      .zone1{fill:url(#blue1);stroke:url(#blue1);}
+      .zone2{fill:url(#purple1);stroke:url(#purple1);}
+      .zone3{fill:url(#blue2);stroke:url(#blue2);}
+      .zone4{fill:url(#purple2);stroke:url(#purple2);}
+      .zone5{fill:url(#blue3);stroke:url(#blue3);}
+      .zone6{fill:url(#purple3);stroke:url(#purple3);}
+      .zone7{fill:url(#blue4);stroke:url(#blue4);}
+      .zone8{fill:url(#purple4);stroke:url(#purple4);}
+      .zone9{fill:url(#blue5);stroke:url(#blue5);}
+      .zone10{fill:url(#purple5);stroke:url(#purple5);}
+      
+      /* Lines inherit zone colors and apply fill:none */
+      .cls-6.zone1,.cls-6.zone2,.cls-6.zone3,.cls-6.zone4,.cls-6.zone5,
+      .cls-6.zone6,.cls-6.zone7,.cls-6.zone8,.cls-6.zone9,.cls-6.zone10{fill:none;}
+    </style>
+  </defs>
+  
+  <!-- Vertices with alternating blue/purple zones from left to right -->
+  <!-- Zone 1 (blue1): x 0-35 -->
+  <circle class="cls-2 zone1" cx="4.5" cy="109.53" r="2.5"/>
+  <circle class="cls-1 zone1" cx="17.52" cy="157.16" r="2.5"/>
+  <circle class="cls-1 zone1" cx="27.78" cy="57.16" r="2.5"/>
+  
+  <!-- Zone 2 (purple1): x 35-70 -->
+  <circle class="cls-4 zone2" cx="43.05" cy="89.61" r="2.5"/>
+  <circle class="cls-3 zone2" cx="43.05" cy="193.49" r="2.5"/>
+  <circle class="cls-1 zone2" cx="45.55" cy="134.39" r="2.5"/>
+  <circle class="cls-3 zone2" cx="56.82" cy="52.16" r="2.5"/>
+  <circle class="cls-1 zone2" cx="72.76" cy="157.16" r="2.5"/>
+  
+  <!-- Zone 3 (blue2): x 70-105 -->
+  <circle class="cls-5 zone3" cx="75.26" cy="119.26" r="2.5"/>
+  <circle class="cls-1 zone3" cx="82.76" cy="75.26" r="2.5"/>
+  <circle class="cls-5 zone3" cx="87.76" cy="222.18" r="2.5"/>
+  <circle class="cls-1 zone3" cx="97.76" cy="15.17" r="2.5"/>
+  <circle class="cls-4 zone3" cx="102.76" cy="193.49" r="2.5"/>
+  <circle class="cls-3 zone3" cx="105.26" cy="119.26" r="2.5"/>
+  
+  <!-- Zone 4 (purple2): x 105-140 -->
+  <circle class="cls-5 zone4" cx="110.26" cy="42.34" r="2.5"/>
+  <circle class="cls-2 zone4" cx="122.76" cy="159.66" r="2.5"/>
+  <circle class="cls-1 zone4" cx="135.26" cy="190.99" r="2.5"/>
+  <circle class="cls-3 zone4" cx="136.2" cy="87.11" r="2.5"/>
+  <circle class="cls-1 zone4" cx="138.7" cy="224.68" r="2.5"/>
+  <circle class="cls-1 zone4" cx="140.26" cy="45.56" r="2.5"/>
+  <circle class="cls-1 zone4" cx="142.76" cy="119.26" r="2.5"/>
+  
+  <!-- Zone 5 (blue3): x 140-175 -->
+  <circle class="cls-3 zone5" cx="145.26" cy="4" r="2.5"/>
+  <circle class="cls-3 zone5" cx="167.76" cy="173.42" r="2.5"/>
+  <circle class="cls-2 zone5" cx="167.76" cy="214.68" r="2.5"/>
+  
+  <!-- Zone 6 (purple3): x 175-210 -->
+  <circle class="cls-1 zone6" cx="177.76" cy="72.76" r="2.5"/>
+  <circle class="cls-1 zone6" cx="182.76" cy="139.39" r="2.5"/>
+  <circle class="cls-4 zone6" cx="187.76" cy="107.03" r="2.5"/>
+  <circle class="cls-2 zone6" cx="190.26" cy="49.66" r="2.5"/>
+  <circle class="cls-1 zone6" cx="200.26" cy="209.68" r="2.5"/>
+  <circle class="cls-1 zone6" cx="202.76" cy="6.5" r="2.5"/>
+  
+  <!-- Zone 7 (blue4): x 210-245 -->
+  <circle class="cls-5 zone7" cx="222.76" cy="149.66" r="2.5"/>
+  <circle class="cls-1 zone7" cx="222.76" cy="188.49" r="2.5"/>
+  <circle class="cls-1 zone7" cx="222.76" cy="217.18" r="2.5"/>
+  <circle class="cls-1 zone7" cx="232.76" cy="127.09" r="2.5"/>
+  <circle class="cls-4 zone7" cx="235.26" cy="207.18" r="2.5"/>
+  <circle class="cls-1 zone7" cx="237.76" cy="75.26" r="2.5"/>
+  <circle class="cls-1 zone7" cx="237.76" cy="284.79" r="2.5"/>
+  
+  <!-- Zone 8 (purple4): x 245-280 -->
+  <circle class="cls-4 zone8" cx="248.8" cy="24.88" r="2.5"/>
+  <circle class="cls-1 zone8" cx="251.3" cy="284.79" r="2.5"/>
+  <circle class="cls-1 zone8" cx="253.8" cy="212.18" r="2.5"/>
+  <circle class="cls-2 zone8" cx="267.76" cy="175.92" r="2.5"/>
+  <circle class="cls-5 zone8" cx="270.26" cy="87.11" r="2.5"/>
+  <circle class="cls-1 zone8" cx="270.26" cy="129.59" r="2.5"/>
+  
+  <!-- Zone 9 (blue5): x 280-320 -->
+  <circle class="cls-1 zone9" cx="280.26" cy="219.68" r="2.5"/>
+  <circle class="cls-3 zone9" cx="287.76" cy="144.39" r="2.5"/>
+  <circle class="cls-1 zone9" cx="290.26" cy="54.66" r="2.5"/>
+  <circle class="cls-1 zone9" cx="307.76" cy="124.59" r="2.5"/>
+  <circle class="cls-3 zone9" cx="310.26" cy="217.18" r="2.5"/>
+  <circle class="cls-5 zone9" cx="312.76" cy="179.2" r="2.5"/>
+  <circle class="cls-4 zone9" cx="320.26" cy="100.64" r="2.5"/>
+  
+  <!-- Zone 10 (purple5): x 320+ -->
+  <circle class="cls-2 zone10" cx="337.76" cy="181.7" r="2.5"/>
+  <circle class="cls-1 zone10" cx="340.26" cy="152.16" r="2.5"/>
+  
+  <!-- Lines with gradient colors between adjacent zones -->
+  <line class="cls-6" x1="202.76" y1="6.5" x2="190.26" y2="49.66" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="145.26" y1="4" x2="190.26" y2="49.66" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="202.76" y1="6.5" x2="145.26" y2="4" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="248.8" y1="24.88" x2="202.76" y2="6.5" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="97.76" y1="15.17" x2="145.26" y2="4" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="280.26" y1="219.68" x2="310.26" y2="217.18" stroke="url(#blue5_to_purple5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="337.76" y1="181.7" x2="310.26" y2="217.18" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="248.8" y1="24.88" x2="290.26" y2="54.66" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="320.26" y1="100.64" x2="289.29" y2="53.96" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="340.26" y1="152.16" x2="320.26" y2="100.64" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="337.76" y1="181.7" x2="340.26" y2="152.16" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="280.26" y1="219.68" x2="253.8" y2="212.18" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="251.3" y1="284.79" x2="253.8" y2="211.11" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="237.76" y1="284.79" x2="251.3" y2="284.79" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="217.18" x2="237.76" y2="285.73" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="235.39" y1="207.83" x2="237.76" y2="284.79" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="235.26" y1="207.18" x2="251.3" y2="284.79" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="253.76" y1="212.18" x2="267.76" y2="175.92" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="280.26" y1="219.68" x2="267.76" y2="175.92" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="312.76" y1="179.2" x2="310.26" y2="217.18" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="337.83" y1="180.91" x2="312.76" y2="179.2" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="307.76" y1="124.59" x2="340.26" y2="152.16" stroke="url(#blue5_to_purple5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="320.26" y1="100.64" x2="307.76" y2="124.59" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="287.76" y1="144.39" x2="307.76" y2="124.59" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="312.76" y1="179.2" x2="286.97" y2="144.39" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="337.83" y1="180.91" x2="307.76" y2="124.59" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="286.97" y1="144.39" x2="339.01" y2="181.7" stroke="url(#blue5_to_purple5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="267.76" y1="175.92" x2="288.79" y2="143.36" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="312.76" y1="179.2" x2="267.76" y2="175.92" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="280.26" y1="220.55" x2="312.76" y2="179.2" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="270.26" y1="87.11" x2="320.26" y2="100.64" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="290.26" y1="54.66" x2="270.26" y2="87.11" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="270.26" y1="129.59" x2="270.26" y2="87.11" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="319.24" y1="100.64" x2="270.26" y2="129.59" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="287.76" y1="144.39" x2="270.26" y2="129.59" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="187.76" y1="107.03" x2="237.76" y2="75.26" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="232.76" y1="127.09" x2="187.76" y2="107.03" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="149.66" x2="187.76" y2="107.03" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="182.76" y1="139.39" x2="188.26" y2="107.64" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="142.76" y1="119.26" x2="188.26" y2="107.64" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="87.11" x2="188.86" y2="107.03" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="177.76" y1="72.76" x2="187.76" y2="107.77" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="75.26" y1="119.26" x2="105.26" y2="119.26" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="122.76" y1="159.66" x2="105.26" y2="119.26" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="102.76" y1="192.58" x2="123.77" y2="159.66" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="173.42" x2="182.51" y2="140.23" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="214.68" x2="167.76" y2="173.42" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="138.7" y1="224.68" x2="167.76" y2="214.68" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="200.26" y1="209.68" x2="168.69" y2="214.68" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="217.18" x2="168.69" y2="214.68" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="87.76" y1="222.18" x2="138.7" y2="224.68" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="193.49" x2="87.76" y2="222.18" stroke="url(#purple1_to_blue2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="17.52" y1="157.16" x2="43.05" y2="193.49" stroke="url(#blue1_to_purple1)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="4.5" y1="109.53" x2="17.52" y2="157.16" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="110.26" y1="42.34" x2="82.76" y2="74.51" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="140.26" y1="45.56" x2="110.26" y2="42.34" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="145.26" y1="4" x2="111.17" y2="42.34" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="140.26" y1="45.56" x2="145.26" y2="4" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="190.93" y1="49.66" x2="140.26" y2="45.56" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="87.11" x2="140.26" y2="45.56" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="177.76" y1="72.76" x2="190.27" y2="49.6" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="87.11" x2="178.9" y2="72.76" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="105.26" y1="119.26" x2="136.2" y2="87.11" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="142.76" y1="119.26" x2="122.75" y2="159.64" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="87.11" x2="142.76" y2="119.26" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="104.5" y1="119.26" x2="142.76" y2="119.26" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="182.76" y1="139.39" x2="142.76" y2="119.26" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="173.42" x2="122.76" y2="160.38" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="182.76" y1="139.39" x2="122.76" y2="159.66" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="200.26" y1="209.68" x2="222.76" y2="188.49" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="168.54" y1="173.42" x2="200.26" y2="209.68" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="149.66" x2="222.76" y2="188.49" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="235.26" y1="207.18" x2="267.76" y2="175" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="253.8" y1="212.18" x2="235.39" y2="207.83" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="217.18" x2="235.39" y2="207.83" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="188.49" x2="267.76" y2="176.12" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="235.26" y1="206.65" x2="222.76" y2="189.25" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="200.26" y1="210.01" x2="235.53" y2="207.18" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="174.08" x2="222.76" y2="149.66" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="188.49" x2="167.76" y2="173.44" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.76" y1="149.52" x2="267.76" y2="176.12" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="270.26" y1="129.59" x2="222.76" y2="148.91" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="267.03" y1="176.12" x2="269.46" y2="129.91" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="190.27" y1="49.6" x2="238.45" y2="75.26" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="248.8" y1="24.88" x2="237.76" y2="76.5" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="190.27" y1="49.6" x2="248.8" y2="24.88" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="222.05" y1="149.52" x2="232.76" y2="127.09" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="270.26" y1="87.11" x2="232.16" y2="128.34" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="238.45" y1="75.26" x2="232.39" y2="126.79" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="271.1" y1="87.11" x2="238.37" y2="75.94" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="248.8" y1="24.88" x2="270.69" y2="88.08" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="232.94" y1="127.09" x2="269.53" y2="129.32" stroke="url(#blue4_to_purple4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="182.76" y1="139.39" x2="222.05" y2="149.52" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="4.5" y1="109.53" x2="27.78" y2="57.16" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="97.76" y1="15.17" x2="27.78" y2="57.16" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="87.76" y1="222.18" x2="102.76" y2="193.49" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="190.99" x2="102.76" y2="193.49" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="214.68" x2="135.26" y2="190.99" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="122.76" y1="159.62" x2="135.26" y2="190.99" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="167.76" y1="173.44" x2="135.26" y2="190.99" stroke="url(#blue3_to_purple3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="87.76" y1="222.18" x2="135.26" y2="191.55" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="138.7" y1="224.68" x2="135.26" y2="191.55" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="72.76" y1="157.16" x2="102.47" y2="194.05" stroke="url(#purple1_to_blue2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="122.76" y1="159.62" x2="72.76" y2="157.16" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="105.26" y1="119.26" x2="72.76" y2="157.16" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="75.26" y1="119.26" x2="72.76" y2="157.16" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="45.55" y1="134.39" x2="73.3" y2="157.83" stroke="url(#purple1_to_blue2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="193.49" x2="73.04" y2="156.83" stroke="url(#purple1_to_blue2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="102.47" y1="194.05" x2="43.05" y2="193.49" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="89.61" x2="45.55" y2="134.39" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="75.26" y1="119.26" x2="43.05" y2="89.61" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="82.76" y1="75.26" x2="43.46" y2="89.99" stroke="url(#blue2_to_purple2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="4.5" y1="109.53" x2="43.46" y2="89.99" stroke="url(#blue1_to_purple1)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="46.19" y1="134.39" x2="17.52" y2="157.16" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="4.5" y1="109.53" x2="45.55" y2="134.22" stroke="url(#blue1_to_purple1)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="75.26" y1="118.81" x2="46.19" y2="134.39" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="193.77" x2="45.98" y2="134.85" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="82.76" y1="75.26" x2="75.26" y2="118.81" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="105.26" y1="119.26" x2="82.76" y2="75.26" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="136.2" y1="87.11" x2="82.76" y2="75.26" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="110.26" y1="42.34" x2="136.33" y2="87.74" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="56.82" y1="52.16" x2="98.5" y2="15" stroke="url(#purple1_to_blue2)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="27.78" y1="57.16" x2="57.3" y2="52.86" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="89.45" x2="57.3" y2="52.16" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="110.88" y1="42.34" x2="56.82" y2="52.16" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="97.46" y1="15.17" x2="110.88" y2="42.34" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="82.76" y1="74.51" x2="56.82" y2="52.93" stroke="url(#blue_to_purple)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="43.05" y1="90.19" x2="28.41" y2="57.06" stroke="url(#purple_to_blue)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="177.76" y1="72.5" x2="237.76" y2="75.26" stroke="url(#purple3_to_blue4)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="139.48" y1="45.56" x2="177.76" y2="72.5" stroke="url(#purple2_to_blue3)" stroke-width="2" filter="url(#glow)"/>
+  <line class="cls-6" x1="270.26" y1="129.59" x2="308.1" y2="123.94" stroke="url(#purple4_to_blue5)" stroke-width="2" filter="url(#glow)"/>
+</svg>
