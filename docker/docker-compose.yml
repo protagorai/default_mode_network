@@ -1,0 +1,161 @@
+# Docker Compose configuration for SDMN Framework
+# Compatible with Podman using podman-compose
+
+version: '3.8'
+
+services:
+  # Main SDMN Framework service
+  sdmn-framework:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: sdmn-framework:latest
+    container_name: sdmn-main
+    
+    # Environment variables
+    environment:
+      - PYTHONPATH=/app/src
+      - SDMN_DATA_DIR=/app/data
+      - SDMN_OUTPUT_DIR=/app/output
+      - SDMN_LOG_LEVEL=INFO
+      - JUPYTER_ENABLE_LAB=yes
+      - DISPLAY=${DISPLAY:-:99}
+    
+    # Volume mounts
+    volumes:
+      - ../data:/app/data:rw
+      - ../output:/app/output:rw  
+      - ../checkpoints:/app/checkpoints:rw
+      - ../logs:/app/logs:rw
+      - ../examples:/app/examples:rw
+      # For development: mount source code
+      # - ../src:/app/src:ro
+    
+    # Port mappings
+    ports:
+      - "8888:8888"  # Jupyter Lab
+      - "8080:8080"  # Web interface (future)
+      - "6006:6006"  # TensorBoard (if needed)
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Command override for different modes
+    command: ["shell"]
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import src.core; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Jupyter Lab service for interactive development  
+  sdmn-jupyter:
+    extends: sdmn-framework
+    container_name: sdmn-jupyter
+    command: ["jupyter"]
+    ports:
+      - "8889:8888"  # Different port to avoid conflicts
+    profiles:
+      - jupyter
+    
+  # GUI service for network assembly interface
+  sdmn-gui:
+    extends: sdmn-framework
+    container_name: sdmn-gui
+    command: ["gui"]
+    environment:
+      - DISPLAY=${DISPLAY:-:99}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - ../data:/app/data:rw
+      - ../output:/app/output:rw
+    profiles:
+      - gui
+    
+  # Database service for simulation data storage (optional)
+  sdmn-db:
+    image: postgres:15-alpine
+    container_name: sdmn-postgres
+    environment:
+      - POSTGRES_DB=sdmn
+      - POSTGRES_USER=sdmn
+      - POSTGRES_PASSWORD=sdmn_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../sql:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    profiles:
+      - database
+    
+  # Redis for caching and job queues (optional)  
+  sdmn-redis:
+    image: redis:7-alpine
+    container_name: sdmn-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    profiles:
+      - cache
+
+  # Monitoring service with Grafana (optional)
+  sdmn-grafana:
+    image: grafana/grafana:latest
+    container_name: sdmn-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ../monitoring/grafana:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    profiles:
+      - monitoring
+
+  # InfluxDB for time series data (optional)
+  sdmn-influxdb:
+    image: influxdb:2.7-alpine
+    container_name: sdmn-influxdb
+    environment:
+      - INFLUXDB_DB=sdmn
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=password
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    ports:
+      - "8086:8086"
+    profiles:
+      - monitoring
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  grafana_data:
+    driver: local
+  influxdb_data:
+    driver: local
+
+# Networks for service communication
+networks:
+  default:
+    driver: bridge
+    name: sdmn-network
