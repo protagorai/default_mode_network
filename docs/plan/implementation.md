@@ -231,7 +231,107 @@ class PopulationActivityProbe(BaseProbe):
         # Approximate LFP as weighted sum of membrane potentials
 ```
 
-## Phase 4: Visualization System (Weeks 13-16)
+## Phase 4: Self-Awareness Foundation (Weeks 13-16)
+
+### Basic Self-Monitoring Implementation
+
+#### Self-State Monitor
+```python
+class SelfStateMonitor:
+    def __init__(self, system_id: str):
+        self.system_id = system_id
+        self.internal_probes = {}
+        self.state_history = []
+        self.performance_metrics = {}
+        
+    def add_self_probe(self, probe_id: str, target_component: str) -> None:
+        """Add probe to monitor internal system state"""
+        self.internal_probes[probe_id] = SelfMonitoringProbe(
+            probe_id, target_component, self.system_id
+        )
+    
+    def assess_current_state(self) -> Dict[str, Any]:
+        """Evaluate current system health and performance"""
+        state = {
+            'timestamp': self.current_time,
+            'network_activity': self._get_network_activity_level(),
+            'resource_usage': self._get_resource_usage(),
+            'processing_efficiency': self._get_processing_efficiency(),
+            'threat_level': self._assess_threat_level(),
+            'opportunity_level': self._assess_opportunity_level()
+        }
+        self.state_history.append(state)
+        return state
+```
+
+#### Risk-Reward Assessment Module
+```python
+class RiskRewardAssessor:
+    def __init__(self):
+        self.threat_patterns = {}
+        self.beneficial_patterns = {}
+        self.decision_history = []
+        
+    def evaluate_stimulus(self, stimulus: Any, context: Dict[str, Any]) -> Dict[str, float]:
+        """Evaluate stimulus for self-preservation implications"""
+        assessment = {
+            'threat_level': self._calculate_threat_level(stimulus, context),
+            'reward_potential': self._calculate_reward_potential(stimulus, context),
+            'uncertainty': self._estimate_uncertainty(stimulus, context),
+            'self_impact': self._assess_self_impact(stimulus, context)
+        }
+        
+        # Remember this assessment for learning
+        self.decision_history.append({
+            'stimulus': stimulus,
+            'context': context,
+            'assessment': assessment,
+            'timestamp': context.get('timestamp', 0)
+        })
+        
+        return assessment
+    
+    def generate_self_preserving_response(self, assessment: Dict[str, float]) -> str:
+        """Generate response that prioritizes self-preservation"""
+        if assessment['threat_level'] > 0.7:
+            return 'protective_response'
+        elif assessment['reward_potential'] > 0.6 and assessment['threat_level'] < 0.3:
+            return 'approach_response'
+        else:
+            return 'cautious_monitoring'
+```
+
+### Self-Referential Feedback Loops
+
+#### DMN Self-Processing Network
+```python
+class SelfReferentialDMN:
+    def __init__(self, regions: Dict[str, 'Population']):
+        self.regions = regions
+        self.self_model = InternalSelfModel()
+        self.narrative_generator = InternalNarrativeSystem()
+        
+    def process_self_referential_input(self, input_data: Any) -> Dict[str, Any]:
+        """Process input through self-referential lens"""
+        
+        # Route through DMN regions
+        pcc_output = self.regions['PCC'].process_with_self_context(input_data, self.self_model)
+        mpfc_output = self.regions['mPFC'].evaluate_self_relevance(input_data, pcc_output)
+        precuneus_output = self.regions['precuneus'].integrate_self_memory(mpfc_output)
+        ag_output = self.regions['angular_gyrus'].construct_self_narrative(precuneus_output)
+        
+        # Update internal self-model
+        self.self_model.update_from_processing(ag_output)
+        
+        return {
+            'self_relevance': mpfc_output.self_relevance_score,
+            'memory_integration': precuneus_output.memory_connections,
+            'narrative_update': ag_output.narrative_changes,
+            'self_model_changes': self.self_model.get_recent_changes()
+        }
+```
+
+## Phase 5: Visualization System (Weeks 17-20)
 
 ### Real-time Visualization
 

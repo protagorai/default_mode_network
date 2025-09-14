@@ -139,6 +139,26 @@ python examples/04_default_mode_networks.py
 - Network synchronization and oscillations
 - Comprehensive brain wave analysis (Delta, Theta, Alpha, Beta, Gamma)
 
+#### Example 05: Self-Aware Networks (🧠 Advanced Feature)
+**File:** `examples/05_self_aware_network.py`
+
+Demonstrates basic self-awareness and self-preservation capabilities through self-monitoring, risk-reward assessment, and adaptive decision-making based on the [Default Mode Network](https://en.wikipedia.org/wiki/Default_mode_network) research.
+
+```bash
+# Using containers
+./scripts/run.sh custom python examples/05_self_aware_network.py
+
+# Local installation
+python examples/05_self_aware_network.py
+```
+
+**What you'll see:**
+- Self-monitoring and health assessment systems
+- Risk-reward evaluation of stimuli for self-preservation
+- Adaptive decision-making based on internal state
+- Internal narrative construction about experiences
+- Basic artificial consciousness indicators
+
 #### Quickstart Simulation (Interactive)
 **File:** `examples/quickstart_simulation.py`
 

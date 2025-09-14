@@ -106,6 +106,30 @@ python examples/04_default_mode_networks.py            # Run example
 
 ---
 
+### 05. Self-Aware Networks 🧠
+**File:** `05_self_aware_network.py`  
+**Runtime:** ~30 seconds  
+**Focus:** Basic self-awareness and self-preservation (ADVANCED FEATURE)
+
+**Demonstrates:**
+- Self-monitoring and health assessment
+- Risk-reward evaluation for self-preservation
+- Adaptive decision-making based on internal state
+- Internal narrative construction
+- Basic artificial consciousness indicators
+- Self-preservation strategy evolution
+
+**Key Outputs:**
+- Self-health monitoring over time
+- Decision patterns and threat avoidance
+- Strategy evolution (exploration/conservation/recovery)
+- Internal narrative samples
+- Self-awareness performance metrics
+
+**Good for:** Consciousness research, self-preservation studies, AI safety research
+
+---
+
 ### Quickstart Simulation
 **File:** `quickstart_simulation.py`  
 **Runtime:** ~15 seconds  
@@ -135,6 +159,12 @@ python examples/04_default_mode_networks.py            # Run example
 python examples/04_default_mode_networks.py
 ```
 
+### For Self-Awareness/Consciousness Research:
+```bash
+1. python examples/04_default_mode_networks.py  # DMN foundations
+2. python examples/05_self_aware_network.py     # Self-awareness demo
+```
+
 ### For Network Architecture Studies:
 ```bash
 1. python examples/02_network_topologies.py     # Compare topologies
@@ -145,6 +175,7 @@ python examples/04_default_mode_networks.py
 ```bash
 1. python examples/03_probe_monitoring.py       # Full monitoring demo
 2. python examples/04_default_mode_networks.py  # Advanced analysis
+3. python examples/05_self_aware_network.py     # Self-monitoring systems
 ```
 
 ## 🔧 Customization Tips

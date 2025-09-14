@@ -83,40 +83,65 @@ class BaseProbe(ABC):
         pass
 ```
 
-### 5. Visualization System (`src/visualization/`)
+### 5. Self-Awareness System (`src/self_awareness/`)
+
+Implements basic self-awareness and self-preservation capabilities:
+- Self-state monitoring and internal narrative construction
+- Risk-reward assessment for self-preservation decision-making
+- Self-referential processing through DMN-like feedback loops
+- Temporal self-projection for future planning and threat avoidance
+
+#### Key Components:
+- `SelfStateMonitor`: Tracks internal system states and performance
+- `RiskRewardAssessor`: Evaluates stimuli for self-preservation implications
+- `SelfReferentialDMN`: Processes information through self-referential lens
+- `InternalNarrativeSystem`: Constructs coherent sense of self over time
+
+### 6. Visualization System (`src/visualization/`)
 
 Multi-modal visualization capabilities:
 - Real-time network activity visualization
 - Post-simulation analysis and plotting
 - 3D network structure rendering
 - EEG-like signal analysis and frequency domain analysis
+- Self-awareness indicator visualization and decision-making process tracking
 
 ## Data Flow Architecture
 
 ```
-Input Stimuli → Simulation Engine → Network Updates → Probe Recording → Visualization/Analysis
-     ↑              ↓                      ↑                ↓
-User Config → Time Manager ← State Manager ← Event Queue ← Output Processing
+Input Stimuli → Risk-Reward Assessment → Simulation Engine → Network Updates → Probe Recording → Visualization/Analysis
+     ↑              ↓                           ↓                      ↑                ↓                    ↓
+User Config → Self-State Monitor ← Time Manager ← State Manager ← Event Queue ← Output Processing → Self-Narrative Update
+     ↑                    ↓                                                                                    ↓
+Self-Model ← Internal Narrative System ← Self-Referential DMN ← Self-Awareness Indicators ← Performance Assessment
 ```
 
-### Simulation Loop
+### Enhanced Simulation Loop with Self-Awareness
 
 1. **Initialization Phase**:
    - Load network configuration
    - Initialize neuron states
    - Set up probe systems
+   - **Initialize self-monitoring systems**
+   - **Create baseline self-model**
    - Configure simulation parameters
 
 2. **Simulation Phase** (repeated for each time step):
-   - Process input stimuli
+   - **Assess incoming stimuli for self-preservation implications**
+   - Process input stimuli through risk-reward assessment
    - Update neuron states
    - Handle spike propagation
+   - **Monitor internal system states**
    - Record probe data
+   - **Update self-referential processing**
    - Update visualization (if real-time)
+   - **Assess decision outcomes and update self-model**
 
 3. **Analysis Phase**:
    - Process recorded data
    - Generate visualizations
+   - **Analyze self-awareness indicators**
+   - **Evaluate self-preservation performance**
    - Export results
    - Cleanup resources
 

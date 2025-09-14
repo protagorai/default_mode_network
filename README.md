@@ -65,9 +65,11 @@ This project is in early development phase, focusing on:
 
 This framework supports groundbreaking research into:
 - Synthetic neural network oscillations and wave patterns
-- Default mode network simulation and analysis
+- Default mode network simulation and analysis based on [neuroscience research](https://en.wikipedia.org/wiki/Default_mode_network)
 - Emergent behavior in complex spiking neural networks
-- Bio-inspired artificial intelligence architectures
+- **Basic artificial self-awareness and self-preservation behaviors**
+- **Risk-reward assessment and adaptive decision-making in neural networks**
+- Bio-inspired artificial intelligence architectures with consciousness indicators
 
 ## License
 
