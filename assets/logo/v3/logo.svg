@@ -20,7 +20,7 @@
   </defs>
   
   <!-- Dark background only -->
-  <rect width="512" height="512" fill="#0D0D0D"/>
+  <!-- <rect width="512" height="512" fill="#0D0D0D"/> -->
   
   <!-- Pure geometric brain network -->
   <g filter="url(#subtleGlow)">
