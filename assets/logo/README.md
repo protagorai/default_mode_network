@@ -4,8 +4,9 @@ This directory contains the official logo assets for the Synthetic Default Mode 
 
 ## Versions
 
-- v1: Initial logo set with triangulated network brain profile (current default at initial release)
-- v2: Improved regionalized and gyri-inspired triangulations (in progress)
+- **v1**: Initial logo set with triangulated network brain profile (archived)
+- **v2**: Improved regionalized and gyri-inspired triangulations (archived)  
+- **v3**: Systematic orthogonal mesh with proper brain anatomy and structured triangulation (current)
 
 ## Logo Variants
 
@@ -54,12 +55,20 @@ This directory contains the official logo assets for the Synthetic Default Mode 
 
 ## Usage Guidelines
 
+## V3 Improvements (Current)
+
+### Key Features
+- **Systematic Approach**: High-resolution orthogonal mesh with algorithmic point selection
+- **Anatomical Accuracy**: Realistic brain silhouette from lateral view
+- **Structured Network**: Grid-based triangulation following brain topology
+- **Neon Gradient**: Turquoise → Blue → Purple with subtle glow effect
+- **Clean Design**: Organized network structure with proper brain regions
+
 ### Recommended Usage
-- Use `v1/logo.svg` for current default branding (until v2 promoted)
-- Use `v1/logo_small.svg` for thumbnails and compact displays  
-- Use `v1/logo_icon.svg` for favicons and app icons
+- Use `v3/logo.svg` for all current branding (main logo)
 - Maintain aspect ratio when resizing
 - Ensure sufficient contrast with background
+- V1 and V2 are archived for reference
 
 ### Technical Specs
 - **Format**: SVG (Scalable Vector Graphics)

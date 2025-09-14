@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Turquoise to purple neon gradient -->
+    <linearGradient id="netGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#40E0D0" stop-opacity="1" />   <!-- Turquoise -->
+      <stop offset="30%" stop-color="#00BFFF" stop-opacity="1" />  <!-- Deep Sky Blue -->
+      <stop offset="70%" stop-color="#8A2BE2" stop-opacity="1" />  <!-- Blue Violet -->
+      <stop offset="100%" stop-color="#9932CC" stop-opacity="1" /> <!-- Dark Orchid -->
+    </linearGradient>
+    
+    <!-- Subtle neon glow (not bright) -->
+    <filter id="subtleGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="1.2" result="glow"/>
+      <feMerge> 
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Dark background only -->
+  <rect width="512" height="512" fill="#0D0D0D"/>
+  
+  <!-- Pure geometric brain network -->
+  <g filter="url(#subtleGlow)">
+    
+    <!-- Brain outline vertices (convex hull forming brain silhouette) -->
+    <circle cx="140" cy="200" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="145" cy="170" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="160" cy="145" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="180" cy="125" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="205" cy="112" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="235" cy="105" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="265" cy="104" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="295" cy="108" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="325" cy="118" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="350" cy="135" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="370" cy="158" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="385" cy="185" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="390" cy="215" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="385" cy="245" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="375" cy="270" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="360" cy="290" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="340" cy="305" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="315" cy="315" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="290" cy="320" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="265" cy="325" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="245" cy="340" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="235" cy="360" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="240" cy="380" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="205" cy="345" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="185" cy="320" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="170" cy="290" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="160" cy="260" r="2.5" fill="url(#netGrad)"/>
+    <circle cx="152" cy="230" r="2.5" fill="url(#netGrad)"/>
+    
+    <!-- Randomly sampled interior vertices (simulating 0.1% of 500x500 grid) -->
+    <circle cx="180" cy="160" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="220" cy="145" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="285" cy="150" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="315" cy="175" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="340" cy="205" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="355" cy="235" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="330" cy="265" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="300" cy="285" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="275" cy="305" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="200" cy="170" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="255" cy="165" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="290" cy="185" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="320" cy="210" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="335" cy="240" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="310" cy="270" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="175" cy="195" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="225" cy="190" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="270" cy="200" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="305" cy="225" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="325" cy="255" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="195" cy="220" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="240" cy="215" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="280" cy="230" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="300" cy="250" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="170" cy="245" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="210" cy="245" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="255" cy="255" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="285" cy="275" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="190" cy="270" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="230" cy="280" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="260" cy="295" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <circle cx="215" cy="305" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="250" cy="315" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    <circle cx="225" cy="335" r="2.5" fill="url(#netGrad)" opacity="0.8"/>
+    
+    <!-- Connected brain outline (convex hull) -->
+    <line x1="140" y1="200" x2="145" y2="170" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="145" y1="170" x2="160" y2="145" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="160" y1="145" x2="180" y2="125" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="180" y1="125" x2="205" y2="112" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="205" y1="112" x2="235" y2="105" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="235" y1="105" x2="265" y2="104" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="265" y1="104" x2="295" y2="108" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="295" y1="108" x2="325" y2="118" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="325" y1="118" x2="350" y2="135" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="350" y1="135" x2="370" y2="158" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="370" y1="158" x2="385" y2="185" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="385" y1="185" x2="390" y2="215" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="390" y1="215" x2="385" y2="245" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="385" y1="245" x2="375" y2="270" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="375" y1="270" x2="360" y2="290" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="360" y1="290" x2="340" y2="305" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="340" y1="305" x2="315" y2="315" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="315" y1="315" x2="290" y2="320" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="290" y1="320" x2="265" y2="325" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="265" y1="325" x2="245" y2="340" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="245" y1="340" x2="235" y2="360" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="235" y1="360" x2="240" y2="380" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="240" y1="380" x2="205" y2="345" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="205" y1="345" x2="185" y2="320" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="185" y1="320" x2="170" y2="290" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="170" y1="290" x2="160" y2="260" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="160" y1="260" x2="152" y2="230" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    <line x1="152" y1="230" x2="140" y2="200" stroke="url(#netGrad)" stroke-width="2" opacity="0.9"/>
+    
+    <!-- Adjacent-only connections between nearest vertices -->
+    
+    <!-- Outline to nearest interior (adjacent connections only) -->
+    <line x1="180" y1="125" x2="180" y2="160" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="235" y1="105" x2="220" y2="145" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="295" y1="108" x2="285" y2="150" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="350" y1="135" x2="315" y2="175" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="385" y1="185" x2="340" y2="205" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="385" y1="245" x2="355" y2="235" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="360" y1="290" x2="330" y2="265" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="315" y1="315" x2="275" y2="305" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="245" y1="340" x2="225" y2="335" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="185" y1="320" x2="215" y2="305" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="160" y1="260" x2="190" y2="270" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="152" y1="230" x2="170" y2="245" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    <line x1="145" y1="170" x2="175" y2="195" stroke="url(#netGrad)" stroke-width="2" opacity="0.7"/>
+    
+    <!-- Interior adjacent connections (nearest neighbor only) -->
+    <line x1="180" y1="160" x2="200" y2="170" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="220" y1="145" x2="255" y2="165" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="285" y1="150" x2="290" y2="185" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="315" y1="175" x2="320" y2="210" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="340" y1="205" x2="335" y2="240" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="355" y1="235" x2="325" y2="255" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="330" y1="265" x2="300" y2="285" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="275" y1="305" x2="250" y2="315" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="225" y1="335" x2="215" y2="305" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="190" y1="270" x2="210" y2="245" stroke="url(#brainNet)" stroke-width="2" opacity="0.6"/>
+    <line x1="170" y1="245" x2="195" y2="220" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="175" y1="195" x2="225" y2="190" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <line x1="200" y1="170" x2="225" y2="190" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="255" y1="165" x2="270" y2="200" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="290" y1="185" x2="305" y2="225" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="320" y1="210" x2="300" y2="250" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="335" y1="240" x2="300" y2="250" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="325" y1="255" x2="285" y2="275" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="300" y1="285" x2="260" y2="295" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="250" y1="315" x2="225" y2="335" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <line x1="225" y1="190" x2="195" y2="220" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="270" y1="200" x2="240" y2="215" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="305" y1="225" x2="280" y2="230" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <line x1="195" y1="220" x2="210" y2="245" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="240" y1="215" x2="255" y2="255" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="280" y1="230" x2="285" y2="275" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <line x1="210" y1="245" x2="190" y2="270" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="255" y1="255" x2="230" y2="280" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="285" y1="275" x2="260" y2="295" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <line x1="230" y1="280" x2="215" y2="305" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    <line x1="260" y1="295" x2="250" y2="315" stroke="url(#netGrad)" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Only a few triangular closures between truly adjacent triplets -->
+    <line x1="180" y1="160" x2="220" y2="145" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="255" y1="165" x2="285" y2="150" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="315" y1="175" x2="340" y2="205" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="225" y1="190" x2="270" y2="200" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="240" y1="215" x2="280" y2="230" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="210" y1="245" x2="255" y2="255" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="230" y1="280" x2="260" y2="295" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    <line x1="215" y1="305" x2="225" y2="335" stroke="url(#netGrad)" stroke-width="2" opacity="0.5"/>
+    
+  </g>
+</svg>
