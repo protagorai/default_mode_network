@@ -193,6 +193,52 @@ This accounts for variation in other brain regions (like cerebellum) that show n
 
 ## References
 
-- Herculano-Houzel, S. (2009). The human brain in numbers: a linearly scaled-up primate brain. *Frontiers in Human Neuroscience*, 3, 31.
-- White, J. G., et al. (1986). The structure of the nervous system of the nematode Caenorhabditis elegans. *Philosophical Transactions of the Royal Society of London*, 314(1165), 1-340.
-- Azevedo, F. A., et al. (2009). Equal numbers of neuronal and nonneuronal cells make the human brain an isometrically scaled‐up primate brain. *Journal of Comparative Neurology*, 513(5), 532-541.
+1. Herculano-Houzel, S. (2009). The human brain in numbers: a linearly scaled-up primate brain. *Frontiers in Human Neuroscience*, 3, 31. doi:10.3389/neuro.09.031.2009.
+
+2. White, J. G., Southgate, E., Thomson, J. N., & Brenner, S. (1986). The structure of the nervous system of the nematode Caenorhabditis elegans. *Philosophical Transactions of the Royal Society of London. Series B, Biological Sciences*, 314(1165), 1-340. doi:10.1098/rstb.1986.0056.
+
+3. Azevedo, F. A., Carvalho, L. R., Grinberg, L. T., Farfel, J. M., Ferretti, R. E., Leite, R. E., et al. (2009). Equal numbers of neuronal and nonneuronal cells make the human brain an isometrically scaled-up primate brain. *The Journal of Comparative Neurology*, 513(5), 532-541. doi:10.1002/cne.21974.
+
+4. Herculano-Houzel, S., & Lent, R. (2005). Isotropic fractionator: a simple, rapid method for the quantification of total cell and neuron numbers in the brain. *The Journal of Neuroscience*, 25(10), 2518-2521. doi:10.1523/jneurosci.4526-04.2005.
+
+5. Dorkenwald, S., et al. (2024). Neuronal wiring diagram of an adult brain. *Nature*, 634(8032), 124-138. doi:10.1038/s41586-024-07558-y.
+
+6. Azevedo, A., et al. (2024). Connectomic reconstruction of a female Drosophila ventral nerve cord. *Nature*, 631(8020), 360-368. doi:10.1038/s41586-024-07389-x.
+
+7. Ryan, K., Lu, Z., & Meinertzhagen, I. A. (2016). The CNS connectome of a tadpole larva of Ciona intestinalis (L.) highlights sidedness in the brain of a chordate sibling. *eLife*, 5, e16962. doi:10.7554/eLife.16962.
+
+8. Smith, C. L., Pivovarova, N., & Reese, T. S. (2015). Coordinated Feeding Behavior in Trichoplax, an Animal without Synapses. *PLOS ONE*, 10(9), e0136098. doi:10.1371/journal.pone.0136098.
+
+9. Olkowicz, S., Kocourek, M., Lučan, R. K., Porteš, M., Fitch, W. T., Herculano-Houzel, S., & Němec, P. (2016). Birds have primate-like numbers of neurons in the forebrain. *Proceedings of the National Academy of Sciences*, 113(26), 7255-7260. doi:10.1073/pnas.1517131113.
+
+10. Herculano-Houzel, S., Collins, C. E., Wong, P., & Kaas, J. H. (2007). Cellular scaling rules for primate brains. *Proceedings of the National Academy of Sciences*, 104(9), 3562-3567. doi:10.1073/pnas.0611396104.
+
+11. Menzel, R., & Giurfa, M. (2001). Cognitive architecture of a mini-brain: the honeybee. *Trends in Cognitive Sciences*, 5(2), 62-71. doi:10.1016/S1364-6613(00)01601-6.
+
+12. Jardim-Messeder, D., Lambert, K., Noctor, S., Pestana, F. M., de Castro Leal, M. E., Bertelsen, M. F., et al. (2017). Dogs Have the Most Neurons, Though Not the Largest Brain: Trade-Off between Body Mass and Number of Neurons in the Cerebral Cortex of Large Carnivoran Species. *Frontiers in Neuroanatomy*, 11, 118. doi:10.3389/fnana.2017.00118.
+
+13. Herculano-Houzel, S., Avelino-de-Souza, K., Neves, K., Porfírio, J., Messeder, D., Mattos Feijó, L., et al. (2014). The elephant brain in numbers. *Frontiers in Neuroanatomy*, 8, 46. doi:10.3389/fnana.2014.00046.
+
+14. Collins, C. E., Turner, E. C., Sawyer, E. K., Reed, J. L., Young, N. A., Flaherty, D. K., & Kaas, J. H. (2016). Cortical cell and neuron density estimates in one chimpanzee hemisphere. *Proceedings of the National Academy of Sciences*, 113(3), 740-745. doi:10.1073/pnas.1524208113.
+
+15. Herculano-Houzel, S., & Kaas, J. H. (2011). Gorilla and orangutan brains conform to the primate cellular scaling rules: implications for human evolution. *Brain, Behavior and Evolution*, 77(1), 33-44. doi:10.1159/000322729.
+
+16. Gabi, M., Collins, C. E., Wong, P., Torres, L. B., Kaas, J. H., & Herculano-Houzel, S. (2010). Cellular scaling rules for the brains of an extended number of primate species. *Brain, Behavior and Evolution*, 76(1), 32-44. doi:10.1159/000319872.
+
+17. Herculano-Houzel, S., Catania, K., Manger, P. R., & Kaas, J. H. (2015). Mammalian Brains Are Made of These: A Dataset of the Numbers and Densities of Neuronal and Nonneuronal Cells in the Brain of Glires, Primates, Scandentia, Eulipotyphlans, Afrotherians and Artiodactyls, and Their Relationship with Body Mass. *Brain, Behavior and Evolution*, 86(3-4), 145-163. doi:10.1159/000437413.
+
+18. Godfrey, R. K., Swartzlander, M., & Gronenberg, W. (2021). Allometric analysis of brain cell number in Hymenoptera suggests ant brains diverge from general trends. *Proceedings of the Royal Society B*, 288(1947), 20210199. doi:10.1098/rspb.2021.0199.
+
+19. Kverková, K., Marhounová, L., Polonyiová, A., Kocourek, M., Zhang, Y., Olkowicz, S., et al. (2022). The evolution of brain neuron numbers in amniotes. *Proceedings of the National Academy of Sciences*, 119(11), e2121624119. doi:10.1073/pnas.2121624119.
+
+20. Herculano-Houzel, S., da Cunha, F. B., Reed, J. L., Kaswera-Kyamakya, C., Gillissen, E., & Manger, P. R. (2020). Microchiropterans have a diminutive cerebral cortex, not an enlarged cerebellum, compared to megachiropterans and other mammals. *The Journal of Comparative Neurology*, 528(17), 2978-2993. doi:10.1002/cne.24985.
+
+21. Kverková, K., Bělíková, T., Olkowicz, S., Pavelková, Z., O'Riain, M. J., Šumbera, R., et al. (2018). Sociality does not drive the evolution of large brains in eusocial African mole-rats. *Scientific Reports*, 8(1), 9203. doi:10.1038/s41598-018-26062-8.
+
+22. Lambert, K. G., Bardi, M., Landis, T., Hyer, M. M., Rzucidlo, A., Gehrt, S., et al. (2014). Behind the Mask: Neurobiological indicants of emotional resilience and cognitive function in wild raccoons (Procyon lotor). *Society for Neuroscience*.
+
+23. Roth, G., & Dicke, U. (2005). Evolution of the brain and intelligence. *Trends in Cognitive Sciences*, 9(5), 250-257. doi:10.1016/j.tics.2005.03.005.
+
+24. Heisenberg, M. (1998). What do the mushroom bodies do for the insect brain? an introduction. *Learning & Memory*, 5(1-2), 1-10. doi:10.1101/lm.5.1.1.
+
+25. Eryomin, A. L. (2022). Biophysics of Evolution of Intellectual Systems. *Biophysics*, 67(2), 320-326. doi:10.1134/S0006350922020051.
