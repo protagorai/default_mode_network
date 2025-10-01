@@ -59,14 +59,7 @@ pip install synthetic-default-mode-network
 ```bash
 git clone https://github.com/username/synthetic-default-mode-network.git
 cd synthetic-default-mode-network
-
-# Smart platform-aware setup (recommended)
-./scripts/setup_platform.sh
-
-# Or choose platform-specific scripts:
-./scripts/setup_development.sh        # Linux/Unix
-./scripts/setup_development_macos.sh  # macOS with Homebrew
-# scripts\setup_development.bat       # Windows (PowerShell/CMD)
+./setup_development.sh
 ```
 
 #### Using Docker
@@ -158,17 +151,11 @@ synthetic-default-mode-network/
 git clone https://github.com/username/synthetic-default-mode-network.git
 cd synthetic-default-mode-network
 
-# Interactive setup (recommended)
-./scripts/setup.sh
-
-# Or run development setup directly
-./scripts/setup_development.sh
+# Run development setup script
+./setup_development.sh
 
 # Activate virtual environment
 poetry shell
-
-# Verify installation
-python scripts/verify_installation.py
 
 # Run tests
 poetry run pytest
@@ -176,6 +163,9 @@ poetry run pytest
 # Run code formatting
 poetry run black src/ tests/
 poetry run isort src/ tests/
+
+# Install pre-commit hooks
+poetry run pre-commit install
 ```
 
 ### Running Tests
@@ -197,28 +187,18 @@ poetry run pytest --cov=src --cov-report=html
 ### Docker Development
 
 ```bash
-# Interactive setup assistant
-./scripts/setup.sh
+# Build Docker image
+docker build -t sdmn:dev .
 
-# Or build and run directly
-./scripts/build.sh
-./scripts/run.sh dev          # Development mode
-./scripts/run.sh jupyter      # Jupyter Lab
-./scripts/run.sh simulation   # Run simulation
-./scripts/run.sh test         # Run tests
+# Run tests in Docker
+docker run --rm sdmn:dev tests
+
+# Run examples in Docker  
+docker run --rm sdmn:dev examples
+
+# Run evaluation
+docker run --rm sdmn:dev evaluation
 ```
-
-### Deployment Options
-
-The SDMN Framework supports multiple deployment strategies:
-
-| Strategy | Best For | Setup Command |
-|----------|----------|---------------|
-| **Local Development** | Active development, debugging | `./scripts/setup_development.sh` |
-| **Local Production** | Production servers | `./scripts/setup_production.sh` |
-| **Containerized** | Cloud, K8s, teams | `./scripts/build.sh && ./scripts/run.sh` |
-
-See [`scripts/README.md`](scripts/README.md) for detailed comparison.
 
 ## Architecture
 

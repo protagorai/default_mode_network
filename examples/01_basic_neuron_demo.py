@@ -14,11 +14,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-from neurons import LIFNeuron, LIFParameters, HHNeuron, HHParameters
-from neurons.base_neuron import NeuronType
+# Import from the SDMN package
+import sdmn
+from sdmn.neurons import LIFNeuron, LIFParameters, HHNeuron, HHParameters, NeuronType
 
 def demo_lif_neuron():
     """Demonstrate Leaky Integrate-and-Fire neuron behavior."""
@@ -193,8 +191,10 @@ def plot_results(lif_data, hh_data):
     
     # Analytical F-I curve
     analytical_rates = []
+    lif_params = LIFParameters()
+    temp_neuron = LIFNeuron("temp", lif_params)
     for current in currents:
-        rate = neuron.get_analytical_firing_rate(current)
+        rate = temp_neuron.get_analytical_firing_rate(current)
         analytical_rates.append(rate)
     
     axes[2, 0].plot(currents, analytical_rates, 'r--', linewidth=2, label='Analytical')
@@ -268,10 +268,10 @@ def main():
         plot_results(lif_data, hh_data)
         
         print("\n=== Summary ===")
-        print("✓ LIF neuron: Simple, computationally efficient")
-        print("✓ HH neuron: Biophysically detailed, shows action potential shape")
-        print("✓ Both models show spiking behavior with current input")
-        print("✓ LIF suitable for large networks, HH for detailed biophysics")
+        print("[OK] LIF neuron: Simple, computationally efficient")
+        print("[OK] HH neuron: Biophysically detailed, shows action potential shape")
+        print("[OK] Both models show spiking behavior with current input")
+        print("[OK] LIF suitable for large networks, HH for detailed biophysics")
         
         print("\nNext steps:")
         print("• Try adjusting neuron parameters")

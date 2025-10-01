@@ -15,12 +15,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-from neurons import LIFNeuron, LIFParameters, SynapseFactory
-from probes import VoltageProbe, SpikeProbe, PopulationActivityProbe, LFPProbe
-from core import SimulationEngine, SimulationConfig
+# Import from the SDMN package
+import sdmn
+from sdmn.neurons import LIFNeuron, LIFParameters, SynapseFactory
+from sdmn.probes import VoltageProbe, SpikeProbe, PopulationActivityProbe, LFPProbe
+from sdmn.core import SimulationEngine, SimulationConfig
 
 def create_monitored_network():
     """Create a small network specifically designed for monitoring demonstration."""

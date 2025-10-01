@@ -1,0 +1,320 @@
+# GitLab CI/CD configuration for SDMN Framework
+
+stages:
+  - lint
+  - test
+  - security
+  - build
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  POETRY_VERSION: "1.6.1"
+  POETRY_HOME: "$CI_PROJECT_DIR/.poetry"
+  POETRY_VENV_IN_PROJECT: "true"
+  POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/poetry"
+
+# Global cache configuration
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/pip/
+    - .cache/poetry/
+    - .venv/
+
+# Global before_script
+before_script:
+  - python --version
+  - pip install --upgrade pip
+  - pip install poetry==$POETRY_VERSION
+  - poetry --version
+  - poetry config virtualenvs.in-project true
+  - poetry install --with dev,test
+
+# Lint stage
+lint:black:
+  stage: lint
+  image: python:3.10
+  script:
+    - poetry run black --check src/ tests/
+  allow_failure: false
+
+lint:isort:
+  stage: lint
+  image: python:3.10
+  script:
+    - poetry run isort --check-only src/ tests/
+  allow_failure: false
+
+lint:flake8:
+  stage: lint
+  image: python:3.10
+  script:
+    - poetry run flake8 src/ tests/
+  allow_failure: true
+
+lint:mypy:
+  stage: lint
+  image: python:3.10
+  script:
+    - poetry run mypy src/ --ignore-missing-imports
+  allow_failure: true
+
+lint:markdown:
+  stage: lint
+  image: node:16-alpine
+  before_script:
+    - npm install -g markdownlint-cli2
+  script:
+    - markdownlint-cli2 "**/*.md"
+  allow_failure: true
+
+# Test stage
+.test_template: &test_template
+  stage: test
+  script:
+    - poetry run pytest tests/ -v --tb=short --cov=src --cov-report=xml --cov-report=term-missing
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - coverage.xml
+    expire_in: 1 week
+
+test:python3.8:
+  <<: *test_template
+  image: python:3.8
+
+test:python3.9:
+  <<: *test_template
+  image: python:3.9
+
+test:python3.10:
+  <<: *test_template
+  image: python:3.10
+
+test:python3.11:
+  <<: *test_template
+  image: python:3.11
+
+test:integration:
+  stage: test
+  image: python:3.10
+  script:
+    - poetry run pytest tests/ -v --tb=short -m "integration"
+  allow_failure: true
+
+test:performance:
+  stage: test
+  image: python:3.10
+  script:
+    - poetry run pytest tests/ -v -m "slow" --tb=short
+  allow_failure: true
+  only:
+    - main
+    - develop
+
+# Security stage
+security:safety:
+  stage: security
+  image: python:3.10
+  script:
+    - pip install safety
+    - poetry export -f requirements.txt | safety check --stdin
+  allow_failure: true
+
+security:bandit:
+  stage: security
+  image: python:3.10
+  script:
+    - pip install bandit[toml]
+    - bandit -r src/ -f json
+  allow_failure: true
+
+# Docker build and test
+build:docker:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+  before_script:
+    - docker info
+  script:
+    # Build image
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    
+    # Test image
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA evaluation
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA python -m sdmn info
+    
+    # Push to registry if on main/develop
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "main" || "$CI_COMMIT_BRANCH" == "develop" ]]; then
+        echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+        docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+        if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
+          docker push $CI_REGISTRY_IMAGE:latest
+        fi
+      fi
+
+# Package build
+build:package:
+  stage: build
+  image: python:3.10
+  script:
+    - poetry build
+    - pip install twine
+    - twine check dist/*
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  only:
+    - tags
+    - main
+    - develop
+
+# Documentation build
+build:docs:
+  stage: build
+  image: python:3.10
+  script:
+    - poetry install --with dev
+    - cd docs && poetry run sphinx-build -b html . _build/html
+  artifacts:
+    paths:
+      - docs/_build/html/
+    expire_in: 1 week
+  only:
+    - main
+    - tags
+
+# Deploy to Test PyPI
+deploy:test-pypi:
+  stage: deploy
+  image: python:3.10
+  dependencies:
+    - build:package
+  script:
+    - pip install twine
+    - |
+      TWINE_PASSWORD=${TEST_PYPI_TOKEN} TWINE_USERNAME=__token__ \
+      twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+  only:
+    - tags
+  when: manual
+
+# Deploy to PyPI
+deploy:pypi:
+  stage: deploy
+  image: python:3.10
+  dependencies:
+    - build:package
+  script:
+    - pip install twine
+    - |
+      TWINE_PASSWORD=${PYPI_TOKEN} TWINE_USERNAME=__token__ \
+      twine upload dist/*
+  only:
+    - tags
+  when: manual
+  environment:
+    name: production
+    url: https://pypi.org/project/synthetic-default-mode-network/
+
+# Deploy documentation to GitLab Pages
+pages:
+  stage: deploy
+  dependencies:
+    - build:docs
+  script:
+    - mkdir public
+    - cp -r docs/_build/html/* public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - main
+
+# Deploy Docker image with version tag
+deploy:docker-release:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker info
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - |
+      # Also tag as latest for main branch tags
+      if [[ "$CI_COMMIT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:latest
+        docker push $CI_REGISTRY_IMAGE:latest
+      fi
+  only:
+    - tags
+
+# Notification jobs
+notify:success:
+  stage: deploy
+  image: alpine:latest
+  dependencies: []
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      echo "✅ Pipeline completed successfully!"
+      echo "Branch: $CI_COMMIT_BRANCH"
+      echo "Commit: $CI_COMMIT_SHA"
+      echo "Pipeline: $CI_PIPELINE_URL"
+      # Add webhook notifications here if needed
+  only:
+    - main
+    - develop
+    - tags
+  when: on_success
+
+notify:failure:
+  stage: deploy
+  image: alpine:latest
+  dependencies: []
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      echo "❌ Pipeline failed!"
+      echo "Branch: $CI_COMMIT_BRANCH" 
+      echo "Commit: $CI_COMMIT_SHA"
+      echo "Pipeline: $CI_PIPELINE_URL"
+      # Add webhook notifications here if needed
+  only:
+    - main
+    - develop
+    - tags
+  when: on_failure
+
+# Include additional pipeline configurations
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
+
+# Override SAST settings
+sast:
+  variables:
+    SAST_EXCLUDED_PATHS: "tests/, docs/, examples/"

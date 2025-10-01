@@ -16,13 +16,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-# Import SDMN Framework components
-from neurons import LIFNeuron, LIFParameters, SynapseFactory
-from probes import VoltageProbe, SpikeProbe, PopulationActivityProbe
-from core import SimulationEngine, SimulationConfig
+# Import from the SDMN package
+import sdmn
+from sdmn.neurons import LIFNeuron, LIFParameters, SynapseFactory
+from sdmn.probes import VoltageProbe, SpikeProbe, PopulationActivityProbe
+from sdmn.core import SimulationEngine, SimulationConfig
 
 class SimpleNetwork:
     """Simple network implementation for the quickstart example."""

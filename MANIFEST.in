@@ -1,0 +1,43 @@
+# Include/exclude files for package distribution
+
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Include configuration files
+include pyproject.toml
+include poetry.lock
+
+# Include package data
+recursive-include src/sdmn *.py
+recursive-include examples *.py
+recursive-include examples *.md
+
+# Exclude development files
+exclude .pre-commit-config.yaml
+exclude .dockerignore
+exclude .markdownlint.json
+exclude .yamllint.yaml
+exclude Dockerfile
+exclude setup_*.sh
+
+# Exclude CI/CD files
+recursive-exclude .github *
+exclude .gitlab-ci.yml
+
+# Exclude tests
+recursive-exclude tests *
+
+# Exclude development directories
+recursive-exclude docs *
+recursive-exclude .venv *
+recursive-exclude __pycache__ *
+recursive-exclude .pytest_cache *
+recursive-exclude .mypy_cache *
+
+# Exclude data directories (user will create)
+recursive-exclude data *
+
+# Include important data structure files
+include data/.gitkeep

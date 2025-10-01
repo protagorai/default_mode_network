@@ -14,13 +14,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-from networks import NetworkBuilder, NetworkConfiguration, NetworkTopology
-from neurons.base_neuron import NeuronType
-from core import SimulationEngine, SimulationConfig
-from probes import SpikeProbe, PopulationActivityProbe
+# Import from the SDMN package
+import sdmn
+from sdmn.networks import NetworkBuilder, NetworkConfiguration, NetworkTopology
+from sdmn.neurons import NeuronType
+from sdmn.core import SimulationEngine, SimulationConfig
+from sdmn.probes import SpikeProbe, PopulationActivityProbe
 
 def create_sample_networks():
     """Create different network topologies for comparison."""
@@ -326,7 +325,7 @@ def create_default_mode_network():
     """Create a simplified default mode network architecture."""
     print("\n=== Creating Default Mode Network ===")
     
-    from neurons import LIFNeuron, LIFParameters, SynapseFactory
+    from sdmn.neurons import LIFNeuron, LIFParameters, SynapseFactory
     
     # Define DMN regions
     regions = {

@@ -16,12 +16,11 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Dict, Any, List
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
-
-from neurons import LIFNeuron, LIFParameters, SynapseFactory
-from probes import VoltageProbe, PopulationActivityProbe
-from core import SimulationEngine, SimulationConfig
+# Import from the SDMN package
+import sdmn
+from sdmn.neurons import LIFNeuron, LIFParameters, SynapseFactory
+from sdmn.probes import VoltageProbe, PopulationActivityProbe
+from sdmn.core import SimulationEngine, SimulationConfig
 
 
 class SelfStateMonitor:
