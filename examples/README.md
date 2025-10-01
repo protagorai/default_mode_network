@@ -36,6 +36,10 @@ python examples/04_default_mode_networks.py            # Run example
 
 **Good for:** Understanding basic building blocks, neuron model comparison
 
+**Example Output:**
+
+![Neuron Model Comparison](../output/01_neuron_comparison.png)
+
 ---
 
 ### 02. Network Topologies  
@@ -57,6 +61,12 @@ python examples/04_default_mode_networks.py            # Run example
 - Population activity patterns
 
 **Good for:** Understanding how network topology affects dynamics
+
+**Example Output:**
+
+![Network Topology Comparison](../output/02_network_comparison.png)
+
+![Spike Raster Comparison](../output/02_raster_comparison.png)
 
 ---
 
@@ -81,6 +91,10 @@ python examples/04_default_mode_networks.py            # Run example
 
 **Good for:** Learning the monitoring system, data analysis techniques
 
+**Example Output:**
+
+![Probe Monitoring Results](../output/03_comprehensive_monitoring.png)
+
 ---
 
 ### 04. Default Mode Networks ⭐
@@ -103,6 +117,10 @@ python examples/04_default_mode_networks.py            # Run example
 - Network synchronization patterns
 
 **Good for:** Main framework purpose, brain wave research, DMN studies
+
+**Example Output:**
+
+![Default Mode Network Results](../output/04_default_mode_network.png)
 
 ---
 
@@ -127,6 +145,10 @@ python examples/04_default_mode_networks.py            # Run example
 - Self-awareness performance metrics
 
 **Good for:** Consciousness research, self-preservation studies, AI safety research
+
+**Example Output:**
+
+![Self-Aware Network Results](../output/05_self_aware_network.png)
 
 ---
 
