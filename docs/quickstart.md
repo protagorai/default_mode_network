@@ -46,8 +46,8 @@ source sdmn-env/bin/activate  # Linux/Mac
 # sdmn-env\Scripts\activate.bat  # Windows
 
 # Install dependencies
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+poetry install --with dev,test
+# or for pip users: pip install -e .[all,dev]
 
 # Set Python path
 export PYTHONPATH="${PWD}/src:$PYTHONPATH"
@@ -259,7 +259,8 @@ sampling_interval=0.5  # Higher resolution monitoring
 
 2. **Missing Dependencies**:
    ```bash
-   pip install -r requirements.txt
+   poetry install --only=main
+   # or: pip install -e .
    ```
 
 3. **No Display (Headless Systems)**:

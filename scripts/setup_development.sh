@@ -72,7 +72,7 @@ poetry config virtualenvs.in-project true
 
 # Install dependencies
 print_step "Installing project dependencies..."
-poetry install --with dev,test
+poetry install --with dev,test,data,web
 
 # Activate virtual environment and run additional setup
 print_step "Setting up pre-commit hooks..."

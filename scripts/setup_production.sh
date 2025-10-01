@@ -110,7 +110,7 @@ if [ "$INSTALL_TYPE" = "poetry" ]; then
 
     print_step "Installing SDMN package with Poetry..."
     poetry config virtualenvs.create true
-    poetry install --only=main --no-dev
+    poetry install --only=main
     
     # Create activation script
     cat > activate_sdmn.sh << 'EOF'

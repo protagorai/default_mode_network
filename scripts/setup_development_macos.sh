@@ -122,7 +122,7 @@ poetry config installer.parallel true
 
 # Install dependencies
 print_step "Installing project dependencies..."
-poetry install --with dev,test
+poetry install --with dev,test,data,web
 
 # macOS-specific: Install additional development dependencies
 print_step "Installing macOS-specific development tools..."

@@ -48,6 +48,8 @@ The **Synthetic Default Mode Network (SDMN) Framework** is a cutting-edge resear
 
 ## Quick Start
 
+> **📖 For detailed installation instructions, see [INSTALL.md](INSTALL.md)**
+
 ### Installation
 
 #### Using pip (recommended)
@@ -158,24 +160,21 @@ synthetic-default-mode-network/
 git clone https://github.com/username/synthetic-default-mode-network.git
 cd synthetic-default-mode-network
 
-# Interactive setup (recommended)
-./scripts/setup.sh
+# Smart platform-aware setup (recommended)
+./scripts/setup_platform.sh
 
-# Or run development setup directly
-./scripts/setup_development.sh
-
-# Activate virtual environment
-poetry shell
+# Or platform-specific setup
+./scripts/setup_development.sh        # Linux/Unix
+./scripts/setup_development_macos.sh  # macOS with Homebrew
+# scripts\setup_development.bat       # Windows native
 
 # Verify installation
 python scripts/verify_installation.py
 
-# Run tests
-poetry run pytest
-
-# Run code formatting
-poetry run black src/ tests/
-poetry run isort src/ tests/
+# Start development
+poetry shell                          # Activate environment
+poetry run pytest                     # Run tests
+python examples/01_basic_neuron_demo.py  # Test with example
 ```
 
 ### Running Tests

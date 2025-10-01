@@ -55,7 +55,7 @@ services:
     
     # Health check
     healthcheck:
-      test: ["CMD", "python3", "-c", "import src.core; print('OK')"]
+      test: ["CMD", "python3", "-c", "import sdmn; print('OK')"]
       interval: 30s
       timeout: 10s
       retries: 3

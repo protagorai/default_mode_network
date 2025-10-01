@@ -143,25 +143,18 @@ def simulate_network_dynamics(networks):
         engine.add_probe("spikes", spike_probe)
         engine.add_probe("population", pop_probe)
         
-        # Add stimulus - stimulate a few random neurons
+        # Apply direct stimulation to generate activity
         stimulated_neurons = np.random.choice(
             list(network.neurons.keys()), 
             size=min(5, len(network.neurons)), 
             replace=False
         )
         
-        def stimulus_callback(step, time):
-            # Periodic stimulation
-            if step % 1000 == 0:  # Every 100ms
-                for neuron_id in stimulated_neurons:
-                    current = np.random.normal(2.0, 0.3)
-                    network.neurons[neuron_id].set_external_input(current)
-            else:
-                # Small baseline to maintain excitability
-                for neuron_id in stimulated_neurons:
-                    network.neurons[neuron_id].set_external_input(0.1)
-        
-        engine.register_step_callback(stimulus_callback)
+        print(f"Applying stimulation to {len(stimulated_neurons)} neurons in {name}...")
+        for neuron_id in stimulated_neurons:
+            stimulus_current = np.random.normal(3.0, 0.5)  # Strong stimulus
+            network.neurons[neuron_id].set_external_input(stimulus_current)
+            print(f"  Applied {stimulus_current:.1f} nA to {neuron_id}")
         
         # Start recording
         spike_probe.start_recording()

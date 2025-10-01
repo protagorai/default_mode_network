@@ -208,23 +208,22 @@ def run_simulation(network, probes, duration=1000.0):
     for probe_name, probe in probes.items():
         engine.add_probe(probe_name, probe)
     
-    # Set up stimulus pattern
-    def stimulus_callback(step, time):
-        """Apply periodic stimulation to maintain network activity."""
-        # Apply stimulus every 100 ms with some variability
-        if step % 1000 == 0:  # Every 100 ms (1000 steps * 0.1 ms)
-            # Random stimulus to first few neurons
-            for i in range(3):
-                neuron_id = f"neuron_{i:03d}"
-                stimulus_current = np.random.normal(2.5, 0.5)  # 2.5 ± 0.5 nA
-                network.neurons[neuron_id].set_external_input(stimulus_current)
-        else:
-            # Small baseline current to maintain excitability
-            for i in range(3):
-                neuron_id = f"neuron_{i:03d}"
-                network.neurons[neuron_id].set_external_input(0.2)
+    # Apply direct stimulation to ensure activity
+    print("Applying external stimulation to generate activity...")
     
-    engine.register_step_callback(stimulus_callback)
+    # Apply strong stimulation to first 3 neurons to trigger network activity
+    stimulus_neurons = ['neuron_000', 'neuron_001', 'neuron_002']
+    for neuron_id in stimulus_neurons:
+        if neuron_id in network.neurons:
+            network.neurons[neuron_id].set_external_input(3.0)  # Strong stimulus above threshold
+            print(f"Applied 3.0 nA stimulus to {neuron_id}")
+    
+    # Apply weaker stimulation to middle neurons
+    secondary_neurons = ['neuron_007', 'neuron_008']  
+    for neuron_id in secondary_neurons:
+        if neuron_id in network.neurons:
+            network.neurons[neuron_id].set_external_input(1.5)  # Moderate stimulus
+            print(f"Applied 1.5 nA stimulus to {neuron_id}")
     
     # Start recording
     for probe in probes.values():

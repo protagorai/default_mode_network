@@ -238,7 +238,8 @@ output/
 
 2. **Missing Dependencies:**
    ```bash
-   pip install -r requirements.txt
+   poetry install --only=main
+   # or: pip install -e .
    ```
 
 3. **Plots Don't Display:**
