@@ -259,7 +259,7 @@ poetry.lock                 # Locked dependencies
 ### User Documentation
 - `README.md` - Comprehensive project overview
 - `INSTALL.md` - Detailed installation guide
-- `examples/EXAMPLE_OUTPUTS.md` - Expected outputs guide
+- `docs/example_outputs.md` - Expected outputs guide
 - `scripts/README.md` - Complete script documentation
 
 ### Technical Documentation

@@ -357,3 +357,5 @@ python examples/quickstart_simulation.py
 - **CSV exports** for spreadsheet analysis
 
 **The examples are designed to provide immediate visual feedback and comprehensive analysis of neural dynamics!** 🎉
+
+
