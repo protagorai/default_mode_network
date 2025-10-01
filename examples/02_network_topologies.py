@@ -143,18 +143,25 @@ def simulate_network_dynamics(networks):
         engine.add_probe("spikes", spike_probe)
         engine.add_probe("population", pop_probe)
         
-        # Apply direct stimulation to generate activity
+        # Apply continuous stimulation via callback
         stimulated_neurons = np.random.choice(
             list(network.neurons.keys()), 
             size=min(5, len(network.neurons)), 
             replace=False
         )
         
-        print(f"Applying stimulation to {len(stimulated_neurons)} neurons in {name}...")
-        for neuron_id in stimulated_neurons:
-            stimulus_current = np.random.normal(3.0, 0.5)  # Strong stimulus
-            network.neurons[neuron_id].set_external_input(stimulus_current)
-            print(f"  Applied {stimulus_current:.1f} nA to {neuron_id}")
+        print(f"Applying continuous stimulation to {len(stimulated_neurons)} neurons in {name}...")
+        
+        # Define stimulus callback for continuous stimulation
+        def apply_continuous_stimulus(step, time):
+            """Apply continuous stimulation throughout simulation."""
+            for neuron_id in stimulated_neurons:
+                # Constant stimulus with small noise
+                stimulus_current = np.random.normal(3.0, 0.3)
+                network.neurons[neuron_id].set_external_input(stimulus_current)
+        
+        # Register callback
+        engine.register_step_callback(apply_continuous_stimulus)
         
         # Start recording
         spike_probe.start_recording()
@@ -438,23 +445,23 @@ def main():
         dmn = create_default_mode_network()
         
         print("\n=== Summary ===")
-        print("✓ Random networks: Good for general connectivity studies")
-        print("✓ Ring networks: Simple, predictable dynamics")
-        print("✓ Small-world networks: Balance of local and global connectivity")
-        print("✓ Grid networks: Spatial organization, local processing")
-        print("✓ DMN networks: Brain-inspired regional architecture")
+        print("[OK] Random networks: Good for general connectivity studies")
+        print("[OK] Ring networks: Simple, predictable dynamics")
+        print("[OK] Small-world networks: Balance of local and global connectivity")
+        print("[OK] Grid networks: Spatial organization, local processing")
+        print("[OK] DMN networks: Brain-inspired regional architecture")
         
         print("\nKey findings:")
         for name in networks.keys():
             if dynamics[name]:
-                print(f"• {name}: {dynamics[name]['total_spikes']} spikes, "
+                print(f"  - {name}: {dynamics[name]['total_spikes']} spikes, "
                       f"{dynamics[name]['mean_synchrony']:.3f} synchrony")
         
         print("\nNext steps:")
-        print("• Try different connection probabilities")
-        print("• Add inhibitory neurons for stability")
-        print("• Implement plasticity for learning")
-        print("• Run example 03 for probe demonstrations")
+        print("  - Try different connection probabilities")
+        print("  - Add inhibitory neurons for stability")
+        print("  - Implement plasticity for learning")
+        print("  - Run example 03 for probe demonstrations")
         
     except Exception as e:
         print(f"Error: {str(e)}")

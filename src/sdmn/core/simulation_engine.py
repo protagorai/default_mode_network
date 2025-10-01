@@ -271,24 +271,24 @@ class SimulationEngine:
             new_events = self.event_processor.process_events(current_events)
             self.event_queue.schedule_events(new_events)
         
-        # Update all networks
-        for network_id, network in self.networks.items():
-            if hasattr(network, 'update'):
-                network.update(time_step.dt)
-        
-        # Update all probes
-        for probe_id, probe in self.probes.items():
-            if hasattr(probe, 'record'):
-                probe.record(time_step.simulation_time)
+        # Call step callbacks FIRST (to apply stimuli before neuron updates)
+        for callback in self.step_callbacks:
+            callback(time_step.step_number, time_step.simulation_time)
         
         # Update all stimuli
         for stimulus_id, stimulus in self.stimuli.items():
             if hasattr(stimulus, 'update'):
                 stimulus.update(time_step.dt, time_step.simulation_time)
         
-        # Call step callbacks
-        for callback in self.step_callbacks:
-            callback(time_step.step_number, time_step.simulation_time)
+        # Update all networks (neurons will now see the inputs set by callbacks)
+        for network_id, network in self.networks.items():
+            if hasattr(network, 'update'):
+                network.update(time_step.dt)
+        
+        # Update all probes (record results after network update)
+        for probe_id, probe in self.probes.items():
+            if hasattr(probe, 'record'):
+                probe.record(time_step.simulation_time)
         
         # Log progress periodically
         if time_step.step_number % 1000 == 0:

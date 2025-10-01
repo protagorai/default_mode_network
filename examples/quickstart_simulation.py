@@ -208,22 +208,27 @@ def run_simulation(network, probes, duration=1000.0):
     for probe_name, probe in probes.items():
         engine.add_probe(probe_name, probe)
     
-    # Apply direct stimulation to ensure activity
-    print("Applying external stimulation to generate activity...")
+    # Setup continuous stimulation via callback
+    print("Setting up continuous stimulation...")
     
-    # Apply strong stimulation to first 3 neurons to trigger network activity
     stimulus_neurons = ['neuron_000', 'neuron_001', 'neuron_002']
-    for neuron_id in stimulus_neurons:
-        if neuron_id in network.neurons:
-            network.neurons[neuron_id].set_external_input(3.0)  # Strong stimulus above threshold
-            print(f"Applied 3.0 nA stimulus to {neuron_id}")
+    secondary_neurons = ['neuron_007', 'neuron_008']
     
-    # Apply weaker stimulation to middle neurons
-    secondary_neurons = ['neuron_007', 'neuron_008']  
-    for neuron_id in secondary_neurons:
-        if neuron_id in network.neurons:
-            network.neurons[neuron_id].set_external_input(1.5)  # Moderate stimulus
-            print(f"Applied 1.5 nA stimulus to {neuron_id}")
+    def apply_continuous_stimulus(step, time):
+        """Apply continuous stimulation throughout the simulation."""
+        # Strong stimulation to first 3 neurons
+        for neuron_id in stimulus_neurons:
+            if neuron_id in network.neurons:
+                network.neurons[neuron_id].set_external_input(3.0)
+        
+        # Moderate stimulation to secondary neurons
+        for neuron_id in secondary_neurons:
+            if neuron_id in network.neurons:
+                network.neurons[neuron_id].set_external_input(1.5)
+    
+    # Register the stimulus callback
+    engine.register_step_callback(apply_continuous_stimulus)
+    print(f"Registered continuous stimulation for {len(stimulus_neurons) + len(secondary_neurons)} neurons")
     
     # Start recording
     for probe in probes.values():
