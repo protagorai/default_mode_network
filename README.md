@@ -48,7 +48,7 @@ The **Synthetic Default Mode Network (SDMN) Framework** is a cutting-edge resear
 
 ## Quick Start
 
-> **📖 For detailed installation instructions, see [INSTALL.md](INSTALL.md)**
+> **📖 For detailed installation instructions, see [INSTALL.md](docs/INSTALL.md)**
 
 ### Installation
 
