@@ -18,7 +18,7 @@ from scipy import signal
 # Import from the SDMN package
 import sdmn
 from sdmn.neurons import LIFNeuron, LIFParameters, SynapseFactory
-from sdmn.probes import VoltageProbe, PopulationActivityProbe, LFPProbe
+from sdmn.probes import VoltageProbe, PopulationActivityProbe, LFPProbe, SpikeProbe
 from sdmn.core import SimulationEngine, SimulationConfig
 
 class DefaultModeNetwork:
@@ -295,28 +295,37 @@ class DefaultModeNetwork:
             neuron.update(dt)
     
     def apply_spontaneous_activity(self, time):
-        """Apply spontaneous activity patterns characteristic of DMN."""
-        # PCC receives more spontaneous input (central hub)
+        """Apply spontaneous activity patterns characteristic of DMN.
+        
+        Sustained background activity with biological variability to drive
+        the default mode network dynamics.
+        """
+        # PCC receives strong sustained input (central hub)
+        # Always apply input every time step (required since inputs are cleared)
         for neuron_id in self.regions['PCC']:
-            if np.random.random() < 0.002:  # 0.2% chance per time step
-                self.neurons[neuron_id].set_external_input(
-                    np.random.normal(1.5, 0.3)
-                )
+            # Sustained input with high variability
+            base_current = 3.5  # Above rheobase
+            noise = np.random.normal(0.0, 1.2)  # High variability
+            self.neurons[neuron_id].set_external_input(max(0, base_current + noise))
         
-        # Other regions receive occasional input
-        for region in ['mPFC', 'AG', 'PCu']:
+        # mPFC receives moderate sustained input (executive control)
+        for neuron_id in self.regions['mPFC']:
+            base_current = 3.0
+            noise = np.random.normal(0.0, 1.0)
+            self.neurons[neuron_id].set_external_input(max(0, base_current + noise))
+        
+        # AG and PCu receive variable input (association areas)
+        for region in ['AG', 'PCu']:
             for neuron_id in self.regions[region]:
-                if np.random.random() < 0.001:  # 0.1% chance
-                    self.neurons[neuron_id].set_external_input(
-                        np.random.normal(1.2, 0.4)
-                    )
+                base_current = 2.8
+                noise = np.random.normal(0.0, 1.1)
+                self.neurons[neuron_id].set_external_input(max(0, base_current + noise))
         
-        # TP receives least input (deeper processing)
+        # TP receives lower but sustained input (semantic processing)
         for neuron_id in self.regions['TP']:
-            if np.random.random() < 0.0005:  # 0.05% chance
-                self.neurons[neuron_id].set_external_input(
-                    np.random.normal(1.0, 0.2)
-                )
+            base_current = 2.5
+            noise = np.random.normal(0.0, 0.9)
+            self.neurons[neuron_id].set_external_input(max(0, base_current + noise))
 
 def analyze_brain_waves(population_data, lfp_data):
     """Comprehensive analysis of synthetic brain waves."""
@@ -600,6 +609,17 @@ def main():
         )
         population_probe.register_neuron_objects(dmn.neurons)
         
+        # Spike probe for tracking individual neuron firing
+        spike_probe = SpikeProbe(
+            "dmn_spike",
+            list(dmn.neurons.keys()),
+            detection_threshold=-40.0,
+            min_spike_interval=1.0,
+            record_waveforms=False
+        )
+        for neuron_id, neuron in dmn.neurons.items():
+            spike_probe.register_neuron_object(neuron_id, neuron)
+        
         # LFP probe positioned in PCC (central hub)
         lfp_probe = LFPProbe(
             "dmn_lfp",
@@ -636,9 +656,11 @@ def main():
         lfp_probe.register_neuron_objects(dmn.neurons, positions)
         
         # Setup simulation
+        sim_time = 2000.0  # 2 seconds - balance between speed and frequency resolution
+        print(f"Configuring simulation for {sim_time} ms...")
         config = SimulationConfig(
             dt=0.1,
-            max_time=5000.0,  # 5 seconds for good frequency resolution
+            max_time=sim_time,
             enable_logging=False
         )
         
@@ -648,6 +670,7 @@ def main():
         # Add probes
         engine.add_probe("voltage", voltage_probe)
         engine.add_probe("population", population_probe)
+        engine.add_probe("spike", spike_probe)
         engine.add_probe("lfp", lfp_probe)
         
         # Add spontaneous activity
@@ -659,6 +682,7 @@ def main():
         # Start recording
         voltage_probe.start_recording()
         population_probe.start_recording()
+        spike_probe.start_recording()
         lfp_probe.start_recording()
         
         print("Running DMN simulation (this may take a moment)...")
@@ -679,6 +703,7 @@ def main():
             probes = {
                 'voltage': voltage_probe,
                 'population': population_probe,
+                'spike': spike_probe,
                 'lfp': lfp_probe
             }
             
@@ -713,18 +738,18 @@ def main():
             print(f"Total network spikes: {total_spikes}")
             
             print("\n=== Summary ===")
-            print("✓ Created biologically-inspired Default Mode Network")
-            print("✓ Generated synthetic brain waves with realistic frequencies")
-            print("✓ Demonstrated regional specialization and connectivity")
-            print("✓ Showed network synchronization and oscillations")
-            print("✓ Analyzed EEG-like frequency bands (Delta, Theta, Alpha, Beta, Gamma)")
+            print("[OK] Created biologically-inspired Default Mode Network")
+            print("[OK] Generated synthetic brain waves with realistic frequencies")
+            print("[OK] Demonstrated regional specialization and connectivity")
+            print("[OK] Showed network synchronization and oscillations")
+            print("[OK] Analyzed EEG-like frequency bands (Delta, Theta, Alpha, Beta, Gamma)")
             
             print("\nThis simulation demonstrates:")
-            print("• Multi-regional brain network architecture")
-            print("• Spontaneous oscillatory activity")
-            print("• Realistic brain wave frequency content")
-            print("• Network-wide synchronization patterns")
-            print("• Local field potential generation")
+            print("  - Multi-regional brain network architecture")
+            print("  - Spontaneous oscillatory activity")
+            print("  - Realistic brain wave frequency content")
+            print("  - Network-wide synchronization patterns")
+            print("  - Local field potential generation")
             
         else:
             print(f"DMN simulation failed: {results.error_message}")

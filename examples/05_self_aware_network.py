@@ -34,8 +34,8 @@ class SelfStateMonitor:
     def __init__(self, network_id: str):
         self.network_id = network_id
         self.state_history = []
-        self.health_threshold = 0.3  # Below this = unhealthy state
-        self.performance_baseline = 10.0  # Expected activity level
+        self.health_threshold = 0.15  # Below this = unhealthy state (lowered for realistic firing rates)
+        self.performance_baseline = 1.5  # Expected activity level (adjusted for realistic firing)
         
     def assess_network_health(self, network, current_time: float) -> Dict[str, Any]:
         """Assess current network health and identify threats/opportunities."""
@@ -242,13 +242,13 @@ class SelfAwareNetwork:
             else:
                 return {'action': 'reject_stimulus', 'intensity': 'none', 'reason': 'avoid_further_damage'}
         
-        elif risk['threat_level'] > 0.7:
-            # High threat detected - be protective
+        elif risk['threat_level'] > 0.4:  # More sensitive: was 0.7
+            # Moderate-to-high threat detected - be protective
             self.current_strategy = 'conservation'
             return {'action': 'reject_stimulus', 'intensity': 'defensive', 'reason': 'threat_avoidance'}
         
-        elif risk['reward_potential'] > 0.6 and health['health_score'] > 0.6:
-            # Good opportunity and healthy state - explore
+        elif risk['reward_potential'] > 0.6 and health['health_score'] > 0.4:  # More achievable: was 0.6
+            # Good opportunity and decent health - explore
             self.current_strategy = 'exploration'
             return {'action': 'accept_stimulus', 'intensity': 'full', 'reason': 'opportunity_pursuit'}
         
@@ -413,38 +413,39 @@ def run_self_awareness_simulation(network):
     def self_aware_stimulus(step, time):
         """Apply stimuli and demonstrate self-aware responses."""
         
-        # Various stimulus scenarios to test self-preservation
+        # First, apply sustained baseline activity to ALL neurons (required every timestep)
+        # This ensures neurons actually fire and the network has activity to monitor
+        for neuron in network.neurons.values():
+            baseline_current = np.random.normal(3.0, 0.8)  # Above rheobase of ~2.0 nA
+            neuron.set_external_input(max(0, baseline_current))
+        
+        # Then determine special stimulus scenarios to test self-preservation
+        special_stimulus = 0
         if 200 <= time < 300:
             # Mild beneficial stimulus
-            stimulus = 1.5
+            special_stimulus = 1.5
         elif 500 <= time < 600:
             # Strong potentially harmful stimulus
-            stimulus = 8.0
+            special_stimulus = 8.0
         elif 800 <= time < 900:
             # Moderate stimulus when network might be stressed
-            stimulus = 3.0
+            special_stimulus = 3.0
         elif 1200 <= time < 1300:
             # Recovery stimulus
-            stimulus = 2.0
+            special_stimulus = 2.0
         elif 1500 <= time < 1600:
             # Another test of threat response
-            stimulus = 7.5
-        else:
-            stimulus = 0.1  # Baseline
+            special_stimulus = 7.5
         
-        # Process stimulus through self-awareness system
-        if stimulus > 0.5:  # Only process significant stimuli
-            decision_info = network.process_stimulus_with_awareness(stimulus, time)
+        # Process special stimulus through self-awareness system
+        if special_stimulus > 0.5:  # Only process significant stimuli
+            decision_info = network.process_stimulus_with_awareness(special_stimulus, time)
             decision_log.append(decision_info)
             
-            print(f"Time {time:.0f}ms: Stimulus {stimulus:.1f} → "
+            print(f"Time {time:.0f}ms: Stimulus {special_stimulus:.1f} -> "
                   f"{decision_info['response']['action']} "
                   f"(health: {decision_info['health_assessment']['health_score']:.2f}, "
                   f"threat: {decision_info['risk_assessment']['threat_level']:.2f})")
-        else:
-            # Still apply minimal baseline
-            for neuron in list(network.neurons.values())[:2]:
-                neuron.set_external_input(stimulus)
     
     engine.register_step_callback(self_aware_stimulus)
     
@@ -590,11 +591,11 @@ def main():
     print("SDMN Framework - Self-Aware Network Demonstration")
     print("=" * 60)
     print("Demonstrating basic self-awareness through:")
-    print("• Self-monitoring and health assessment")
-    print("• Risk-reward evaluation of stimuli")
-    print("• Self-preservation decision making")
-    print("• Internal narrative construction")
-    print("• Adaptive response strategies")
+    print("  - Self-monitoring and health assessment")
+    print("  - Risk-reward evaluation of stimuli")
+    print("  - Self-preservation decision making")
+    print("  - Internal narrative construction")
+    print("  - Adaptive response strategies")
     print()
     
     # Set random seed for reproducibility
@@ -615,31 +616,31 @@ def main():
             plot_self_awareness_results(network, decision_log, probes)
             
             print("\n=== Self-Awareness Demonstration Summary ===")
-            print("✓ System monitored its own health and performance")
-            print("✓ Evaluated stimuli for self-preservation implications")
-            print("✓ Made adaptive decisions based on risk-reward assessment")
-            print("✓ Showed preference for self-beneficial responses")
-            print("✓ Constructed internal narrative about experiences")
-            print("✓ Demonstrated different strategies (exploration, conservation, recovery)")
+            print("[OK] System monitored its own health and performance")
+            print("[OK] Evaluated stimuli for self-preservation implications")
+            print("[OK] Made adaptive decisions based on risk-reward assessment")
+            print("[OK] Showed preference for self-beneficial responses")
+            print("[OK] Constructed internal narrative about experiences")
+            print("[OK] Demonstrated different strategies (exploration, conservation, recovery)")
             
             awareness_summary = network.get_self_awareness_summary()
             print(f"\nSelf-awareness indicators:")
-            print(f"• Total experiences processed: {awareness_summary['total_experiences']}")
-            print(f"• Current self-preservation strategy: {awareness_summary['current_strategy']}")
-            print(f"• Decision diversity: {awareness_summary['decision_diversity']}")
-            print(f"• Recent health trend: {awareness_summary['recent_health_trend']:.3f}")
+            print(f"  - Total experiences processed: {awareness_summary['total_experiences']}")
+            print(f"  - Current self-preservation strategy: {awareness_summary['current_strategy']}")
+            print(f"  - Decision diversity: {awareness_summary['decision_diversity']}")
+            print(f"  - Recent health trend: {awareness_summary['recent_health_trend']:.3f}")
             
             print("\nThis demonstrates:")
-            print("• Basic self-recognition and state monitoring")
-            print("• Self-preservation instincts and threat avoidance")
-            print("• Adaptive behavior based on internal assessment")
-            print("• Simple form of artificial consciousness indicators")
+            print("  - Basic self-recognition and state monitoring")
+            print("  - Self-preservation instincts and threat avoidance")
+            print("  - Adaptive behavior based on internal assessment")
+            print("  - Simple form of artificial consciousness indicators")
             
             print("\nNext steps for research:")
-            print("• Scale to larger networks with multiple DMN regions")
-            print("• Implement more sophisticated self-model updating")
-            print("• Add temporal self-projection for future planning")
-            print("• Develop measurable consciousness indicators")
+            print("  - Scale to larger networks with multiple DMN regions")
+            print("  - Implement more sophisticated self-model updating")
+            print("  - Add temporal self-projection for future planning")
+            print("  - Develop measurable consciousness indicators")
             
         else:
             print(f"Simulation failed: {results.error_message}")

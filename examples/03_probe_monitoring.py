@@ -204,32 +204,39 @@ def run_monitored_simulation(network, probes):
     slow_neurons = [nid for nid in neuron_ids if nid.startswith('slow')]
     
     def complex_stimulus(step, time):
-        """Complex stimulation pattern to generate interesting activity."""
+        """Complex stimulation pattern with high biological variability."""
         
-        # Periodic stimulation of fast neurons (high frequency)
-        if step % 500 == 0:  # Every 50 ms
+        # Apply stimulus every time step (required since inputs are cleared)
+        # Use high variability to create realistic, irregular firing patterns
+        
+        # Fast neurons - high frequency bursts with HIGH variability
+        # Burst every 50ms for 20ms duration
+        if (step % 500 < 200):  # Burst for 20ms every 50ms
             for neuron_id in fast_neurons[:2]:
-                current = np.random.normal(2.5, 0.3)
-                network.neurons[neuron_id].set_external_input(current)
+                # Very noisy input: 50% coefficient of variation
+                current = np.random.normal(4.5, 2.0)  # High variability
+                network.neurons[neuron_id].set_external_input(max(0, current))
         
-        # Less frequent stimulation of medium neurons
-        if step % 1000 == 0:  # Every 100 ms
+        # Medium neurons - moderate frequency bursts with HIGH variability
+        # Burst every 100ms for 30ms duration
+        if (step % 1000 < 300):  # Burst for 30ms every 100ms
             for neuron_id in medium_neurons[:2]:
-                current = np.random.normal(2.0, 0.4)
-                network.neurons[neuron_id].set_external_input(current)
+                current = np.random.normal(3.5, 1.5)  # High variability
+                network.neurons[neuron_id].set_external_input(max(0, current))
         
-        # Occasional stimulation of slow neurons
-        if step % 2000 == 0:  # Every 200 ms
+        # Slow neurons - low frequency bursts with HIGH variability
+        # Burst every 200ms for 50ms duration
+        if (step % 2000 < 500):  # Burst for 50ms every 200ms
             for neuron_id in slow_neurons[:1]:
-                current = np.random.normal(1.8, 0.2)
-                network.neurons[neuron_id].set_external_input(current)
+                current = np.random.normal(3.0, 1.2)  # High variability
+                network.neurons[neuron_id].set_external_input(max(0, current))
         
-        # Background noise for all neurons
-        if step % 100 == 0:  # Every 10 ms
-            for neuron_id in neuron_ids:
-                noise = np.random.normal(0.0, 0.05)  # Small noise
-                current_input = network.neurons[neuron_id].external_input
-                network.neurons[neuron_id].set_external_input(current_input + noise)
+        # Strong background noise for all neurons (biological realism)
+        # This creates the variability seen in real neural recordings
+        for neuron_id in neuron_ids:
+            noise = np.random.normal(0.0, 0.5)  # Strong noise
+            current_input = network.neurons[neuron_id].external_input
+            network.neurons[neuron_id].set_external_input(max(0, current_input + noise))
     
     engine.register_step_callback(complex_stimulus)
     
@@ -512,24 +519,24 @@ def main():
             plot_comprehensive_results(analysis)
             
             print("\n=== Summary ===")
-            print("✓ Voltage probes: Record membrane potentials (synthetic EEG)")
-            print("✓ Spike probes: Detect and analyze action potentials")
-            print("✓ Population probes: Monitor collective network activity")
-            print("✓ LFP probes: Simulate local field potential recordings")
+            print("[OK] Voltage probes: Record membrane potentials (synthetic EEG)")
+            print("[OK] Spike probes: Detect and analyze action potentials")
+            print("[OK] Population probes: Monitor collective network activity")
+            print("[OK] LFP probes: Simulate local field potential recordings")
             
             print("\nKey capabilities demonstrated:")
-            print("• High-resolution voltage monitoring")
-            print("• Precise spike timing detection")
-            print("• Population-level brain wave generation")
-            print("• Frequency domain analysis")
-            print("• Network synchronization measurement")
-            print("• Local field potential simulation")
+            print("  - High-resolution voltage monitoring")
+            print("  - Precise spike timing detection")
+            print("  - Population-level brain wave generation")
+            print("  - Frequency domain analysis")
+            print("  - Network synchronization measurement")
+            print("  - Local field potential simulation")
             
             print("\nNext steps:")
-            print("• Experiment with different probe configurations")
-            print("• Try real-time visualization capabilities")
-            print("• Implement custom probe types")
-            print("• Run example 04 for advanced network analysis")
+            print("  - Experiment with different probe configurations")
+            print("  - Try real-time visualization capabilities")
+            print("  - Implement custom probe types")
+            print("  - Run example 04 for advanced network analysis")
         
         else:
             print(f"Simulation failed: {results.error_message}")
