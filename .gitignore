@@ -306,3 +306,6 @@ tramp
 .bzr/
 .bzrignore
 
+# Experiments directory
+experiments/
+
