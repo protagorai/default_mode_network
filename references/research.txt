@@ -1,0 +1,7 @@
+
+BrainChip Neuromorphic hardware
+https://brainchip.com/
+https://investor.brainchip.com/
+
+SNN Framework SpikingJelly (for PyTorch):
+https://github.com/fangwei123456/spikingjelly/tree/master
