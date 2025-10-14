@@ -261,14 +261,11 @@ class GradedNeuron(BaseNeuron):
             for inp in inputs:
                 self.add_synaptic_input(inp)
         
-        # Get total external input
-        total_external = self.get_total_input()
-        
         # Update gating variables first (if any)
         self._update_gating_variables(dt)
         
-        # Integrate voltage
-        V_new = self.integrate_membrane_equation(dt, total_external)
+        # Integrate voltage (I_ext_current is already set via set_external_current())
+        V_new = self.integrate_membrane_equation(dt, self.I_ext_current)
         self.state.membrane_potential = V_new
         
         # Update time
@@ -277,7 +274,7 @@ class GradedNeuron(BaseNeuron):
         # Clear inputs for next step
         self.clear_inputs()
         
-        # Reset current accumulators
+        # Reset current accumulators (but keep I_ext_current as it persists)
         self.I_syn_total = 0.0
         self.I_gap_total = 0.0
     
