@@ -7,9 +7,14 @@ including connectivity patterns, population management, and network topology ana
 
 from sdmn.networks.network_builder import NetworkBuilder, NetworkTopology, NetworkConfiguration, Network
 
+# C. elegans specific network management
+from sdmn.networks.celegans import CElegansNetwork, SimulationState
+
 __all__ = [
     'NetworkBuilder',
     'NetworkTopology',
     'NetworkConfiguration', 
-    'Network'
+    'Network',
+    'CElegansNetwork',
+    'SimulationState',
 ]
