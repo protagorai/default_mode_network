@@ -91,6 +91,8 @@ class BrowserVisualizer:
                             msg["timeline"] = vf.timeline
                         if vf.plasticity:
                             msg["plasticity"] = vf.plasticity
+                        if vf.neuromod:
+                            msg["neuromod"] = vf.neuromod
                         await ws.send_text(json.dumps(msg))
                     await asyncio.sleep(1 / 60)
 
@@ -121,6 +123,22 @@ class BrowserVisualizer:
                         x = float(cmd.get("x", 250))
                         y = float(cmd.get("y", 200))
                         ctrl.add_chemical_source(x, y, strength=1.0, radius=80.0)
+                    elif action == "add_food":
+                        x = float(cmd.get("x", 250))
+                        y = float(cmd.get("y", 200))
+                        if ctrl.environment:
+                            ctrl.environment.add_food_source(x, y)
+                    elif action == "add_pain":
+                        x = float(cmd.get("x", 250))
+                        y = float(cmd.get("y", 200))
+                        if ctrl.environment:
+                            ctrl.environment.add_pain_zone(x, y)
+                    elif action == "toggle_neuromod":
+                        feature = cmd.get("feature")
+                        if ctrl.neuromod and feature:
+                            cur = getattr(ctrl.neuromod.config, feature, None)
+                            if isinstance(cur, bool):
+                                setattr(ctrl.neuromod.config, feature, not cur)
                     elif action == "toggle_dmn":
                         ctrl.enable_dmn = not ctrl.enable_dmn
                     elif action == "set_engine":

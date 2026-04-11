@@ -26,14 +26,37 @@ class ChemicalSource:
 
 
 @dataclass
+class FoodSource:
+    """Depletable food source. Triggers dopamine when consumed."""
+    x: float
+    y: float
+    amount: float = 100.0       # depletes toward 0
+    radius: float = 60.0
+    consumption_rate: float = 0.5  # amount consumed per ms near source
+    regrow_rate: float = 0.01     # amount regrown per ms
+
+
+@dataclass
+class PainZone:
+    """Noxious zone. Triggers octopamine/avoidance via ASH neurons."""
+    x: float
+    y: float
+    intensity: float = 1.0
+    radius: float = 50.0
+
+
+@dataclass
 class WormState:
     """Observable state of the worm body for rendering."""
-    segments: List[Tuple[float, float]]  # (x, y) per segment
-    heading: float                        # radians
+    segments: List[Tuple[float, float]]
+    heading: float
     speed: float
-    dorsal_activation: List[float]        # per-segment [0,1]
-    ventral_activation: List[float]       # per-segment [0,1]
-    chemical_concentration: float         # at head
+    dorsal_activation: List[float]
+    ventral_activation: List[float]
+    chemical_concentration: float
+    food_at_head: float = 0.0
+    pain_at_head: float = 0.0
+    is_feeding: bool = False
 
 
 N_SEGMENTS = 12
@@ -74,16 +97,26 @@ class WormEnvironment:
         self.chemical_sources: List[ChemicalSource] = [
             ChemicalSource(arena_w * 0.75, arena_h * 0.5, strength=1.0, radius=120.0),
         ]
+        self.food_sources: List[FoodSource] = [
+            FoodSource(arena_w * 0.75, arena_h * 0.5, amount=100.0, radius=60.0),
+        ]
+        self.pain_zones: List[PainZone] = [
+            PainZone(arena_w * 0.25, arena_h * 0.8, intensity=1.0, radius=50.0),
+        ]
 
         self._heading = 0.0
         self._x = arena_w * 0.4
         self._y = arena_h * 0.45
-        self._phase = 0.0  # undulation phase
+        self._phase = 0.0
         self._segments: List[Tuple[float, float]] = []
         self._dorsal_act = [0.0] * N_SEGMENTS
         self._ventral_act = [0.0] * N_SEGMENTS
         self._speed = 0.0
         self._chem_at_head = 0.0
+        self._food_at_head = 0.0
+        self._pain_at_head = 0.0
+        self._is_feeding = False
+        self._speed_mod = 1.0
         self._rebuild_segments()
 
     def _rebuild_segments(self) -> None:
@@ -144,18 +177,64 @@ class WormEnvironment:
 
         self._rebuild_segments()
 
-        self._chem_at_head = 0.0
+        # Sense chemical/food/pain at head position
         hx, hy = self._segments[0]
+        self._chem_at_head = 0.0
         for src in self.chemical_sources:
             dist = math.hypot(hx - src.x, hy - src.y)
             self._chem_at_head += src.strength * max(0, 1.0 - dist / src.radius)
 
+        self._food_at_head = 0.0
+        self._is_feeding = False
+        for food in self.food_sources:
+            dist = math.hypot(hx - food.x, hy - food.y)
+            if dist < food.radius and food.amount > 0:
+                proximity = max(0, 1.0 - dist / food.radius)
+                self._food_at_head += proximity * (food.amount / 100.0)
+                consumed = food.consumption_rate * dt_ms * proximity
+                food.amount = max(0, food.amount - consumed)
+                self._is_feeding = True
+            food.amount = min(100.0, food.amount + food.regrow_rate * dt_ms)
+
+        self._pain_at_head = 0.0
+        for pz in self.pain_zones:
+            dist = math.hypot(hx - pz.x, hy - pz.y)
+            if dist < pz.radius:
+                self._pain_at_head += pz.intensity * max(0, 1.0 - dist / pz.radius)
+
+    def set_speed_modulation(self, mod: float) -> None:
+        """Set locomotion speed modulation from neuromodulation system."""
+        self._speed_mod = mod
+
     def get_sensory_currents(self) -> Dict[str, float]:
-        """Return current (pA) to inject into sensory neurons based on chemical field."""
-        c = self._chem_at_head
+        """Return current (pA) to inject into sensory neurons based on environment."""
         currents: Dict[str, float] = {}
-        for nid in _HEAD_SENSORY:
-            currents[nid] = c * 40.0
+        # Chemosensory: AWC, ASE, AWA, AWB, ADF sense food/chemicals
+        chem_current = self._chem_at_head * 40.0 + self._food_at_head * 30.0
+        for nid in ["AWCL", "AWCR", "ASEL", "ASER", "AWAL", "AWAR",
+                     "AWBL", "AWBR", "ADFL", "ADFR"]:
+            currents[nid] = chem_current
+
+        # Nociceptive: ASH detects pain
+        pain_current = self._pain_at_head * 60.0
+        for nid in ["ASHL", "ASHR"]:
+            currents[nid] = pain_current
+
+        # Dopamine neurons: CEP/ADE/PDE fire when detecting food
+        da_food_current = self._food_at_head * 50.0
+        for nid in ["CEPDL", "CEPDR", "CEPVL", "CEPVR", "ADEL", "ADER", "PDEL", "PDER"]:
+            currents[nid] = da_food_current
+
+        # Serotonin neurons: NSM fire during feeding
+        if self._is_feeding:
+            for nid in ["NSML", "NSMR"]:
+                currents[nid] = 40.0
+
+        # Octopamine neurons: RIC fire under pain/stress
+        if self._pain_at_head > 0.1:
+            for nid in ["RICL", "RICR"]:
+                currents[nid] = self._pain_at_head * 50.0
+
         return currents
 
     def get_state(self) -> WormState:
@@ -166,6 +245,9 @@ class WormEnvironment:
             dorsal_activation=list(self._dorsal_act),
             ventral_activation=list(self._ventral_act),
             chemical_concentration=self._chem_at_head,
+            food_at_head=self._food_at_head,
+            pain_at_head=self._pain_at_head,
+            is_feeding=self._is_feeding,
         )
 
     def get_chemical_field(self, resolution: int = 20) -> List[List[float]]:
@@ -191,6 +273,12 @@ class WormEnvironment:
     def clear_chemical_sources(self) -> None:
         self.chemical_sources.clear()
 
+    def add_food_source(self, x: float, y: float, amount: float = 100.0) -> None:
+        self.food_sources.append(FoodSource(x, y, amount=amount, radius=60.0))
+
+    def add_pain_zone(self, x: float, y: float, intensity: float = 1.0) -> None:
+        self.pain_zones.append(PainZone(x, y, intensity=intensity, radius=50.0))
+
     def to_json(self) -> dict:
         """Serialise environment state for WebSocket."""
         st = self.get_state()
@@ -201,7 +289,14 @@ class WormEnvironment:
             "dorsal": [round(v, 3) for v in st.dorsal_activation],
             "ventral": [round(v, 3) for v in st.ventral_activation],
             "chem": round(st.chemical_concentration, 3),
+            "food": round(st.food_at_head, 3),
+            "pain": round(st.pain_at_head, 3),
+            "feeding": st.is_feeding,
             "arena": [self.arena_w, self.arena_h],
             "sources": [[round(s.x, 1), round(s.y, 1), round(s.strength, 2), round(s.radius, 1)]
                         for s in self.chemical_sources],
+            "foods": [[round(f.x, 1), round(f.y, 1), round(f.amount, 1), round(f.radius, 1)]
+                      for f in self.food_sources],
+            "pains": [[round(p.x, 1), round(p.y, 1), round(p.intensity, 2), round(p.radius, 1)]
+                      for p in self.pain_zones],
         }

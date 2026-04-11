@@ -45,8 +45,16 @@ def main():
     args = parser.parse_args()
 
     print("Loading C. elegans connectome...")
-    from sdmn.networks.celegans.network_manager import SimulationConfig
-    config = SimulationConfig(dt=0.1, record_interval=5, progress_interval=5000)
+    from sdmn.networks.celegans.network_manager import SimulationConfig, PlasticityConfig
+    config = SimulationConfig(
+        dt=0.1,
+        record_interval=5,
+        progress_interval=5000,
+        plasticity=PlasticityConfig(
+            enable_stdp=True,
+            enable_habituation=True,
+        ),
+    )
     network = build_connectome_network()
     network.config = config
 

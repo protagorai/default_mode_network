@@ -20,6 +20,7 @@ from sdmn.networks.celegans.network_manager import CElegansNetwork, SimulationFr
 from sdmn.visualization.layouts import compute_layout
 from sdmn.visualization.environment import WormEnvironment
 from sdmn.visualization.fast_sim import _prepare_arrays, _fast_step, build_frame_from_arrays, get_plasticity_stats
+from sdmn.visualization.neuromodulation import NeuromodulationSystem, NeuromodConfig
 
 V_REST = -65.0
 V_PEAK = -20.0
@@ -37,6 +38,7 @@ class VisualizationFrame:
     env: Optional[dict] = None
     timeline: Optional[dict] = None
     plasticity: Optional[dict] = None
+    neuromod: Optional[dict] = None
     dmn_active: bool = True
 
 
@@ -92,6 +94,10 @@ class LiveVisualizer:
 
         # Engine selection
         self.engine: str = "vectorized"
+
+        # Neuromodulation
+        self.neuromod_config = NeuromodConfig()
+        self.neuromod: Optional[NeuromodulationSystem] = None
 
         self._speed: float = 1.0
         self._paused = threading.Event()
@@ -199,11 +205,16 @@ class LiveVisualizer:
         if self._sim_arrays is not None:
             plasticity_data = get_plasticity_stats(self._sim_arrays)
 
+        neuromod_data = None
+        if self.neuromod is not None:
+            neuromod_data = self.neuromod.to_json()
+
         viz_frame = VisualizationFrame(
             sim=frame,
             env=env_data,
             timeline=timeline_data,
             plasticity=plasticity_data,
+            neuromod=neuromod_data,
             dmn_active=self.enable_dmn,
         )
 
@@ -301,6 +312,11 @@ class LiveVisualizer:
         arrays = _prepare_arrays(self.network)
         self._sim_arrays = arrays
 
+        # Initialize neuromodulation system
+        self.neuromod = NeuromodulationSystem(
+            self.neuromod_config, arrays["ids"], arrays["id_to_idx"])
+        self.neuromod.init_eligibility(len(arrays["syn_pre"]))
+
         target_fps = 60.0
         sim_time = 0.0
         step_i = 0
@@ -316,7 +332,14 @@ class LiveVisualizer:
                     arrays["syn_efficacy"][:] = 1.0
                     arrays["trace_pre"][:] = 0.0
                     arrays["trace_post"][:] = 0.0
+                    arrays["syn_g_rise"][:] = 0.0
+                    arrays["syn_g_decay"][:] = 0.0
+                    arrays["m_Ca"][:] = 0.0
+                    arrays["m_K"][:] = 0.0
+                    arrays["m_KCa"][:] = 0.0
+                    arrays["Ca_internal"][:] = arrays["Ca_rest"]
                     self._dmn_adaptation = {nid: 0.0 for nid in self._dmn_phases}
+                    self.neuromod.reset()
                     active_stimuli.clear()
                     sim_time = 0.0
                     step_i = 0
@@ -345,15 +368,36 @@ class LiveVisualizer:
                     self._on_frame(frame)
                 else:
                     batch = max(5, int(desired_sim_ms / dt))
+                    dt_batch = batch * dt
+
                     arrays["I_ext"][:] = 0.0
                     self._apply_dmn_to_arrays(arrays, sim_time)
                     self._apply_stimuli_to_arrays(arrays, active_stimuli, sim_time)
                     self._apply_environment_to_arrays(arrays, dt, batch)
 
+                    # Neuromodulation: modulatory currents + reward learning
+                    if self.neuromod:
+                        self.neuromod.step(arrays["V"], arrays["I_ext"], dt_batch)
+                        arrays["I_ext"] += self.neuromod.get_modulatory_currents()
+
+                        if self.environment:
+                            self.environment.set_speed_modulation(
+                                self.neuromod.get_speed_modulation())
+
                     for _ in range(batch):
                         _fast_step(arrays, dt)
 
-                    sim_time += batch * dt
+                    # Reward-modulated STDP (after batch, using accumulated traces)
+                    if self.neuromod and self.neuromod.config.enable_reward_learning:
+                        pc = arrays["plasticity_config"]
+                        self.neuromod.update_eligibility(
+                            arrays["trace_pre"], arrays["trace_post"],
+                            arrays["syn_pre"], arrays["syn_post"], dt_batch)
+                        self.neuromod.apply_reward_learning(
+                            arrays["syn_weight"], arrays["syn_weight_initial"],
+                            pc.stdp_w_min, pc.stdp_w_max_factor)
+
+                    sim_time += dt_batch
                     step_i += batch
                     frame = build_frame_from_arrays(arrays, sim_time, step_i)
                     self._on_frame(frame)

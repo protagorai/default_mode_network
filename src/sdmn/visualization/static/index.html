@@ -15,6 +15,8 @@ body{background:#08081a;color:#ccc;font-family:'Segoe UI',system-ui,sans-serif;h
 .ctrl-btn{background:#14143a;border:1px solid #2a2a5a;color:#aac;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px;transition:all .15s}
 .ctrl-btn:hover{background:#1e1e50;border-color:#4af}
 .ctrl-btn.on{background:#1a3a6a;border-color:#4af;color:#8cf}
+.toggle-nm{font-size:11px;padding:2px 8px}
+.toggle-nm:not(.on){opacity:0.4}
 #speed-group{display:flex;align-items:center;gap:5px}
 #speed-slider{width:110px;accent-color:#4af}
 #speed-label{font-size:11px;min-width:44px;text-align:right;font-family:monospace;color:#7af}
@@ -63,6 +65,12 @@ canvas{display:block;width:100%;height:100%}
     <option value="object">Engine: Full (Biophysical)</option>
   </select>
   <div class="sep"></div>
+  <select id="sel-place" class="ctrl-btn" title="Click arena to place">
+    <option value="chemical">Place: Chemical</option>
+    <option value="food">Place: Food</option>
+    <option value="pain">Place: Pain Zone</option>
+  </select>
+  <div class="sep"></div>
   <button class="ctrl-btn" id="btn-restart">Restart</button>
   <button class="ctrl-btn" id="btn-clear">Clear Arena</button>
   <div class="sep"></div>
@@ -71,6 +79,16 @@ canvas{display:block;width:100%;height:100%}
     <div class="legend-item"><div class="legend-dot" style="background:#50d060"></div>Inter</div>
     <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div>Motor</div>
   </div>
+</div>
+
+<div id="learningbar" style="display:flex;align-items:center;gap:8px;padding:4px 14px;background:#0c0c22;border-bottom:1px solid #1a1a3a;flex-shrink:0;flex-wrap:wrap">
+  <span style="font-size:10px;color:#558">LEARNING:</span>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_dopamine">Dopamine</button>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_serotonin">Serotonin</button>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_octopamine">Octopamine</button>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_nociception">Nociception</button>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_reward_learning">Reward STDP</button>
+  <button class="ctrl-btn toggle-nm on" data-feature="enable_sensory_adaptation">Sensory Adapt</button>
 </div>
 
 <div id="main">
@@ -103,7 +121,7 @@ const CLS = {
 let neurons=[], edges=[], idIdx={}, regions=[];
 let hasEnv=false, arenaW=500, arenaH=400, chemField=null;
 let paused=false, simTime=0, simStep=0, dmnOn=true;
-let envState=null, timeline=null, plasticity=null;
+let envState=null, timeline=null, plasticity=null, neuromod=null;
 let activeEdges=new Map();
 let ws;
 
@@ -152,11 +170,15 @@ function connect(){
         }
       }
       activeEdges.clear();
-      for(const[a,b,c] of(m.synapses||[]))activeEdges.set(idIdx[a]+','+idIdx[b],Math.min(1,Math.abs(c)/1.5));
-      for(const[a,b,c] of(m.gaps||[])){const ki=Math.min(idIdx[a],idIdx[b]),kj=Math.max(idIdx[a],idIdx[b]);activeEdges.set(ki+','+kj,Math.min(1,Math.abs(c)/1.0));}
+      let maxSynI=0;
+      for(const[a,b,c] of(m.synapses||[]))maxSynI=Math.max(maxSynI,Math.abs(c));
+      const synNorm=Math.max(10,maxSynI*0.8);
+      for(const[a,b,c] of(m.synapses||[])){const v=Math.abs(c)/synNorm;if(v>0.25)activeEdges.set(idIdx[a]+','+idIdx[b],Math.min(1,(v-0.25)/0.75));}
+      for(const[a,b,c] of(m.gaps||[])){const ki=Math.min(idIdx[a],idIdx[b]),kj=Math.max(idIdx[a],idIdx[b]);const v=Math.abs(c)/5;if(v>0.25)activeEdges.set(ki+','+kj,Math.min(1,(v-0.25)/0.75));}
       if(m.env)envState=m.env;
       if(m.timeline)timeline=m.timeline;
       if(m.plasticity)plasticity=m.plasticity;
+      if(m.neuromod)neuromod=m.neuromod;
       btnPause.textContent=paused?'Resume':'Pause';
       btnDmn.textContent='DMN: '+(dmnOn?'ON':'OFF');
       btnDmn.classList.toggle('on',dmnOn);
@@ -183,6 +205,16 @@ btnRestart.addEventListener('click',()=>{send({action:'restart'});neurons.forEac
 btnClear.addEventListener('click',()=>{send({action:'clear_chemicals'});chemField=null;});
 selEngine.addEventListener('change',()=>send({action:'set_engine',value:selEngine.value}));
 selDmnMode.addEventListener('change',()=>send({action:'set_dmn_mode',value:selDmnMode.value}));
+
+document.querySelectorAll('.toggle-nm').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const feat=btn.dataset.feature;
+    send({action:'toggle_neuromod',feature:feat});
+    btn.classList.toggle('on');
+    const isOn=btn.classList.contains('on');
+    btn.style.opacity=isOn?'1':'0.4';
+  });
+});
 speedSlider.addEventListener('input',()=>{
   const v=Math.pow(10,parseFloat(speedSlider.value));
   send({action:'set_speed',value:v});
@@ -214,13 +246,17 @@ cN.addEventListener('click',(ev)=>{
 });
 cN.addEventListener('mouseleave',()=>{tooltip.style.display='none';hoverIdx=-1;});
 
-/* --- Environment canvas click = add chemical --- */
+/* --- Environment canvas click = place item --- */
+const selPlace=document.getElementById('sel-place');
 cE.addEventListener('click',(ev)=>{
   if(!hasEnv)return;
   const r=cE.getBoundingClientRect();
   const cx=(ev.clientX-r.left)/r.width*arenaW;
   const cy=(ev.clientY-r.top)/r.height*arenaH;
-  send({action:'add_chemical',x:cx,y:cy});
+  const mode=selPlace.value;
+  if(mode==='food')send({action:'add_food',x:cx,y:cy});
+  else if(mode==='pain')send({action:'add_pain',x:cx,y:cy});
+  else send({action:'add_chemical',x:cx,y:cy});
 });
 
 /* ========== DRAWING ========== */
@@ -296,13 +332,36 @@ function drawEnv(){
       ctxE.fillRect(c*cw,r*ch,cw,ch);
     }
   }
-  // live chemical from sources
+  // Chemical sources (green)
   if(envState.sources){
     for(const[sx2,sy2,str,rad] of envState.sources){
       const grad=ctxE.createRadialGradient(sx2*sx,sy2*sy,0,sx2*sx,sy2*sy,rad*sx);
-      grad.addColorStop(0,`rgba(0,220,80,${str*0.3})`);
+      grad.addColorStop(0,`rgba(0,220,80,${str*0.25})`);
       grad.addColorStop(1,'rgba(0,220,80,0)');
       ctxE.fillStyle=grad; ctxE.beginPath(); ctxE.arc(sx2*sx,sy2*sy,rad*sx,0,Math.PI*2); ctxE.fill();
+    }
+  }
+  // Food sources (yellow-green, sized by amount remaining)
+  if(envState.foods){
+    for(const[fx,fy,amt,rad] of envState.foods){
+      const a=amt/100;
+      const grad=ctxE.createRadialGradient(fx*sx,fy*sy,0,fx*sx,fy*sy,rad*sx*a);
+      grad.addColorStop(0,`rgba(180,255,50,${0.4*a})`);
+      grad.addColorStop(1,'rgba(180,255,50,0)');
+      ctxE.fillStyle=grad; ctxE.beginPath(); ctxE.arc(fx*sx,fy*sy,rad*sx,0,Math.PI*2); ctxE.fill();
+      ctxE.fillStyle=`rgba(200,255,80,${0.6*a})`; ctxE.font='9px sans-serif'; ctxE.textAlign='center';
+      ctxE.fillText(amt.toFixed(0)+'%',fx*sx,fy*sy-rad*sx*0.3);
+    }
+  }
+  // Pain zones (red)
+  if(envState.pains){
+    for(const[px,py,inten,rad] of envState.pains){
+      const grad=ctxE.createRadialGradient(px*sx,py*sy,0,px*sx,py*sy,rad*sx);
+      grad.addColorStop(0,`rgba(255,40,40,${inten*0.35})`);
+      grad.addColorStop(1,'rgba(255,40,40,0)');
+      ctxE.fillStyle=grad; ctxE.beginPath(); ctxE.arc(px*sx,py*sy,rad*sx,0,Math.PI*2); ctxE.fill();
+      ctxE.fillStyle='rgba(255,80,80,0.5)'; ctxE.font='9px sans-serif'; ctxE.textAlign='center';
+      ctxE.fillText('PAIN',px*sx,py*sy);
     }
   }
 
@@ -329,11 +388,20 @@ function drawEnv(){
   // head marker
   ctxE.fillStyle='#ff6644'; ctxE.beginPath(); ctxE.arc(segs[0][0]*sx,segs[0][1]*sy,4,0,Math.PI*2); ctxE.fill();
 
-  // info text
+  // Feeding indicator
+  if(envState.feeding){
+    ctxE.fillStyle='rgba(200,255,100,0.15)'; ctxE.fillRect(0,0,w,h);
+    ctxE.fillStyle='#af8'; ctxE.font='bold 11px sans-serif'; ctxE.textAlign='center';
+    ctxE.fillText('FEEDING',w/2,16);
+  }
+  // Pain indicator
+  if(envState.pain>0.1){
+    const pa=Math.min(1,envState.pain);
+    ctxE.fillStyle=`rgba(255,0,0,${pa*0.08})`; ctxE.fillRect(0,0,w,h);
+  }
+  // Info text
   ctxE.fillStyle='#668'; ctxE.font='10px monospace'; ctxE.textAlign='left';
-  ctxE.fillText(`speed: ${envState.speed.toFixed(1)}  chem: ${envState.chem.toFixed(2)}`,6,h-6);
-  ctxE.fillStyle='#335'; ctxE.textAlign='right';
-  ctxE.fillText('Click to add attractant',w-6,h-6);
+  ctxE.fillText(`spd:${envState.speed.toFixed(0)} food:${(envState.food||0).toFixed(1)} pain:${(envState.pain||0).toFixed(1)}`,6,h-6);
 }
 
 function drawTimeline(){
@@ -365,27 +433,37 @@ function drawTimeline(){
     ctxT.fillText(timeline.times[n-1].toFixed(0)+' ms',chartW-pad,h-2);
   }
 
-  // --- Plasticity info ---
+  // --- Neuromodulators ---
   ctxT.textAlign='left'; ctxT.font='10px monospace';
-  let y=16;
-  ctxT.fillStyle='#6688aa';
-  ctxT.fillText('LEARNING & HABITUATION',infoX,y); y+=16;
+  let y=14;
+
+  if(neuromod){
+    const barW=80, barH=8, bx=infoX;
+    function drawBar(label,val,color,yy){
+      ctxT.fillStyle='#446'; ctxT.fillText(label,bx,yy);
+      ctxT.fillStyle='#1a1a2e'; ctxT.fillRect(bx+30,yy-7,barW,barH);
+      ctxT.fillStyle=color; ctxT.fillRect(bx+30,yy-7,barW*Math.min(1,val),barH);
+      ctxT.fillStyle='#889'; ctxT.fillText((val*100).toFixed(0)+'%',bx+30+barW+4,yy);
+    }
+    drawBar('DA',neuromod.dopamine,'#f0c030',y); y+=14;
+    drawBar('5HT',neuromod.serotonin,'#c060f0',y); y+=14;
+    drawBar('OA',neuromod.octopamine,'#f06030',y); y+=14;
+
+    const rew=neuromod.reward||0;
+    ctxT.fillStyle=rew>0?'#6c6':'#c66';
+    ctxT.fillText(`Reward: ${rew>=0?'+':''}${rew.toFixed(3)}`,bx,y); y+=16;
+  }
+
+  // --- Plasticity ---
+  ctxT.fillStyle='#556';
+  ctxT.fillText('PLASTICITY',infoX,y); y+=13;
   if(plasticity){
-    ctxT.fillStyle='#8ac';
-    ctxT.fillText(`Synapses: ${plasticity.n_total}`,infoX,y); y+=13;
-    const strengthened=plasticity.n_strengthened||0;
-    const weakened=plasticity.n_weakened||0;
-    const habituated=plasticity.n_habituated||0;
-    ctxT.fillStyle='#6c6'; ctxT.fillText(`Strengthened: ${strengthened}`,infoX,y); y+=13;
-    ctxT.fillStyle='#c66'; ctxT.fillText(`Weakened: ${weakened}`,infoX,y); y+=13;
-    ctxT.fillStyle='#ca6'; ctxT.fillText(`Habituated: ${habituated}`,infoX,y); y+=13;
-    const eff=plasticity.efficacy_mean||1;
-    ctxT.fillStyle='#889';
-    ctxT.fillText(`Avg efficacy: ${(eff*100).toFixed(0)}%`,infoX,y); y+=13;
-    const wc=plasticity.weight_change_mean||0;
-    ctxT.fillText(`Avg weight chg: ${wc>=0?'+':''}${wc.toFixed(4)}`,infoX,y);
-  } else {
-    ctxT.fillStyle='#446'; ctxT.fillText('Waiting...',infoX,y);
+    const s=plasticity.n_strengthened||0, wk=plasticity.n_weakened||0, hab=plasticity.n_habituated||0;
+    ctxT.fillStyle='#6c6'; ctxT.fillText(`+${s}`,infoX,y);
+    ctxT.fillStyle='#c66'; ctxT.fillText(`-${wk}`,infoX+40,y);
+    ctxT.fillStyle='#ca6'; ctxT.fillText(`H${hab}`,infoX+76,y); y+=13;
+    ctxT.fillStyle='#667';
+    ctxT.fillText(`eff:${((plasticity.efficacy_mean||1)*100).toFixed(0)}%`,infoX,y);
   }
 }
 
