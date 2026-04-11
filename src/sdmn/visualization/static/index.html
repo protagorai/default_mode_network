@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDMN Live Neural Visualizer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08081a;color:#ccc;font-family:'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+#topbar{display:flex;align-items:center;gap:12px;padding:6px 14px;background:#10102a;border-bottom:1px solid #1a1a3a;flex-shrink:0;flex-wrap:wrap}
+#topbar h1{font-size:13px;font-weight:600;color:#7af;white-space:nowrap}
+.sep{width:1px;height:22px;background:#2a2a4a}
+#clock{font-family:'Courier New',monospace;font-size:13px;color:#aef;min-width:120px}
+.ctrl-btn{background:#14143a;border:1px solid #2a2a5a;color:#aac;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:12px;transition:all .15s}
+.ctrl-btn:hover{background:#1e1e50;border-color:#4af}
+.ctrl-btn.on{background:#1a3a6a;border-color:#4af;color:#8cf}
+#speed-group{display:flex;align-items:center;gap:5px}
+#speed-slider{width:110px;accent-color:#4af}
+#speed-label{font-size:11px;min-width:44px;text-align:right;font-family:monospace;color:#7af}
+.legend{display:flex;gap:10px;font-size:11px}
+.legend-item{display:flex;align-items:center;gap:3px}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+#main{display:flex;flex:1;overflow:hidden}
+#left-panel{flex:1;position:relative;border-right:1px solid #1a1a3a;min-width:0}
+#right-panel{width:380px;display:flex;flex-direction:column;flex-shrink:0}
+#env-panel{flex:1;position:relative;border-bottom:1px solid #1a1a3a}
+#timeline-panel{height:140px;position:relative;flex-shrink:0}
+
+canvas{display:block;width:100%;height:100%}
+#tooltip{position:absolute;display:none;background:rgba(8,8,26,0.94);border:1px solid #4af;border-radius:6px;padding:5px 9px;font-size:11px;pointer-events:none;color:#ddd;z-index:20;line-height:1.4;max-width:200px}
+
+#panel-label-left{position:absolute;top:4px;left:8px;font-size:10px;color:#446;pointer-events:none;z-index:5}
+#panel-label-env{position:absolute;top:4px;left:8px;font-size:10px;color:#446;pointer-events:none;z-index:5}
+#panel-label-tl{position:absolute;top:4px;left:8px;font-size:10px;color:#446;pointer-events:none;z-index:5}
+#stim-hint{position:absolute;bottom:4px;right:8px;font-size:10px;color:#335;pointer-events:none;z-index:5}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>C. elegans Live Visualizer</h1>
+  <div class="sep"></div>
+  <span id="clock">0.00 ms</span>
+  <div class="sep"></div>
+  <button class="ctrl-btn" id="btn-pause">Pause</button>
+  <button class="ctrl-btn" id="btn-step">Step</button>
+  <div id="speed-group">
+    <span style="font-size:11px;color:#668">Speed</span>
+    <input type="range" id="speed-slider" min="-2" max="2" step="0.01" value="-0.3">
+    <span id="speed-label">0.50x</span>
+  </div>
+  <div class="sep"></div>
+  <button class="ctrl-btn" id="btn-dmn">DMN: ON</button>
+  <select id="sel-dmn-mode" class="ctrl-btn" title="DMN mode">
+    <option value="oscillator">DMN: Oscillator</option>
+    <option value="recurrent">DMN: Recurrent</option>
+  </select>
+  <div class="sep"></div>
+  <select id="sel-engine" class="ctrl-btn" title="Simulation engine">
+    <option value="vectorized">Engine: Fast (NumPy)</option>
+    <option value="object">Engine: Full (Biophysical)</option>
+  </select>
+  <div class="sep"></div>
+  <button class="ctrl-btn" id="btn-restart">Restart</button>
+  <button class="ctrl-btn" id="btn-clear">Clear Arena</button>
+  <div class="sep"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div>Sensory</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#50d060"></div>Inter</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div>Motor</div>
+  </div>
+</div>
+
+<div id="main">
+  <div id="left-panel">
+    <span id="panel-label-left">NEURAL NETWORK</span>
+    <span id="stim-hint">Click neuron to stimulate</span>
+    <canvas id="cNeural"></canvas>
+    <div id="tooltip"></div>
+  </div>
+  <div id="right-panel">
+    <div id="env-panel">
+      <span id="panel-label-env">ENVIRONMENT</span>
+      <canvas id="cEnv"></canvas>
+    </div>
+    <div id="timeline-panel">
+      <span id="panel-label-tl">POPULATION ACTIVITY</span>
+      <canvas id="cTimeline"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLS = {
+  sensory:     {r:0.29,g:0.62,b:1.0},
+  interneuron: {r:0.31,g:0.82,b:0.38},
+  motor:       {r:1.0, g:0.60,b:0.0},
+  unknown:     {r:0.5, g:0.5, b:0.5},
+};
+
+let neurons=[], edges=[], idIdx={}, regions=[];
+let hasEnv=false, arenaW=500, arenaH=400, chemField=null;
+let paused=false, simTime=0, simStep=0, dmnOn=true;
+let envState=null, timeline=null, plasticity=null;
+let activeEdges=new Map();
+let ws;
+
+const cN=document.getElementById('cNeural'), ctxN=cN.getContext('2d');
+const cE=document.getElementById('cEnv'), ctxE=cE.getContext('2d');
+const cT=document.getElementById('cTimeline'), ctxT=cT.getContext('2d');
+const tooltip=document.getElementById('tooltip');
+const clock=document.getElementById('clock');
+const btnPause=document.getElementById('btn-pause');
+const btnStep=document.getElementById('btn-step');
+const btnDmn=document.getElementById('btn-dmn');
+const speedSlider=document.getElementById('speed-slider');
+const speedLabel=document.getElementById('speed-label');
+
+function resizeAll(){
+  for(const[cv,wrap] of [[cN,'left-panel'],[cE,'env-panel'],[cT,'timeline-panel']]){
+    const el=document.getElementById(wrap);
+    cv.width=el.clientWidth*devicePixelRatio;
+    cv.height=el.clientHeight*devicePixelRatio;
+    cv.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+}
+window.addEventListener('resize',resizeAll); resizeAll();
+
+function send(o){if(ws&&ws.readyState===1)ws.send(JSON.stringify(o));}
+
+function connect(){
+  const proto=location.protocol==='https:'?'wss':'ws';
+  ws=new WebSocket(`${proto}://${location.host}/ws`);
+  ws.onmessage=(ev)=>{
+    const m=JSON.parse(ev.data);
+    if(m.type==='init'){
+      neurons=m.neurons.map(([id,x,y,cls])=>({id,x,y,cls,bri:0}));
+      idIdx={}; neurons.forEach((n,i)=>idIdx[n.id]=i);
+      edges=m.edges.map(([s,d])=>({s:idIdx[s],d:idIdx[d]})).filter(e=>e.s!==undefined&&e.d!==undefined);
+      regions=m.regions||[];
+      hasEnv=m.hasEnv||false;
+      if(m.arena){arenaW=m.arena[0];arenaH=m.arena[1];}
+      chemField=m.chemField||null;
+    } else if(m.type==='frame'){
+      simTime=m.time_ms; simStep=m.step; paused=m.paused; dmnOn=m.dmn;
+      for(const[id,v] of Object.entries(m.voltages)){
+        const i=idIdx[id]; if(i!==undefined){
+          const raw=(v-(-65))/25; /* more sensitive: -65=0, -40=1 */
+          neurons[i].bri=Math.max(0,Math.min(1,raw));
+        }
+      }
+      activeEdges.clear();
+      for(const[a,b,c] of(m.synapses||[]))activeEdges.set(idIdx[a]+','+idIdx[b],Math.min(1,Math.abs(c)/1.5));
+      for(const[a,b,c] of(m.gaps||[])){const ki=Math.min(idIdx[a],idIdx[b]),kj=Math.max(idIdx[a],idIdx[b]);activeEdges.set(ki+','+kj,Math.min(1,Math.abs(c)/1.0));}
+      if(m.env)envState=m.env;
+      if(m.timeline)timeline=m.timeline;
+      if(m.plasticity)plasticity=m.plasticity;
+      btnPause.textContent=paused?'Resume':'Pause';
+      btnDmn.textContent='DMN: '+(dmnOn?'ON':'OFF');
+      btnDmn.classList.toggle('on',dmnOn);
+      if(m.engine)selEngine.value=m.engine;
+      if(m.dmn_mode)selDmnMode.value=m.dmn_mode;
+      const spd=m.speed; speedSlider.value=Math.log10(spd);
+      speedLabel.textContent=spd>=1?spd.toFixed(1)+'x':spd.toFixed(3)+'x';
+    }
+  };
+  ws.onclose=()=>setTimeout(connect,2000);
+}
+connect();
+
+const btnRestart=document.getElementById('btn-restart');
+const btnClear=document.getElementById('btn-clear');
+
+const selEngine=document.getElementById('sel-engine');
+const selDmnMode=document.getElementById('sel-dmn-mode');
+
+btnPause.addEventListener('click',()=>send({action:paused?'resume':'pause'}));
+btnStep.addEventListener('click',()=>send({action:'step'}));
+btnDmn.addEventListener('click',()=>send({action:'toggle_dmn'}));
+btnRestart.addEventListener('click',()=>{send({action:'restart'});neurons.forEach(n=>n.bri=0);});
+btnClear.addEventListener('click',()=>{send({action:'clear_chemicals'});chemField=null;});
+selEngine.addEventListener('change',()=>send({action:'set_engine',value:selEngine.value}));
+selDmnMode.addEventListener('change',()=>send({action:'set_dmn_mode',value:selDmnMode.value}));
+speedSlider.addEventListener('input',()=>{
+  const v=Math.pow(10,parseFloat(speedSlider.value));
+  send({action:'set_speed',value:v});
+});
+
+/* --- Neural canvas click = stimulus --- */
+let hoverIdx=-1;
+cN.addEventListener('mousemove',(ev)=>{
+  const r=cN.getBoundingClientRect(), mx=ev.clientX-r.left, my=ev.clientY-r.top;
+  const w=r.width, h=r.height; hoverIdx=-1;
+  const R=Math.max(3,Math.min(w,h)*0.009);
+  for(let i=0;i<neurons.length;i++){
+    if(Math.hypot(mx-neurons[i].x*w,my-neurons[i].y*h)<R*2){hoverIdx=i;break;}
+  }
+  if(hoverIdx>=0){
+    const n=neurons[hoverIdx],v=(-65+n.bri*45).toFixed(1);
+    tooltip.innerHTML=`<b>${n.id}</b><br>${n.cls}<br>${v} mV`;
+    tooltip.style.display='block';
+    tooltip.style.left=(ev.clientX-cN.parentElement.getBoundingClientRect().left+12)+'px';
+    tooltip.style.top=(ev.clientY-cN.parentElement.getBoundingClientRect().top+12)+'px';
+  } else tooltip.style.display='none';
+});
+cN.addEventListener('click',(ev)=>{
+  if(hoverIdx>=0){
+    const n=neurons[hoverIdx];
+    send({action:'stimulus',neuron:n.id,current:80});
+    n._flash=1.0;
+  }
+});
+cN.addEventListener('mouseleave',()=>{tooltip.style.display='none';hoverIdx=-1;});
+
+/* --- Environment canvas click = add chemical --- */
+cE.addEventListener('click',(ev)=>{
+  if(!hasEnv)return;
+  const r=cE.getBoundingClientRect();
+  const cx=(ev.clientX-r.left)/r.width*arenaW;
+  const cy=(ev.clientY-r.top)/r.height*arenaH;
+  send({action:'add_chemical',x:cx,y:cy});
+});
+
+/* ========== DRAWING ========== */
+
+function drawNeural(){
+  const w=cN.width/devicePixelRatio, h=cN.height/devicePixelRatio;
+  ctxN.clearRect(0,0,w,h);
+  const R=Math.max(3.5,Math.min(w,h)*0.012);
+
+  // region labels
+  ctxN.font='11px sans-serif'; ctxN.textAlign='center';
+  for(const rg of regions){
+    ctxN.fillStyle='rgba(70,70,140,0.6)';
+    const lines=rg.name.split('\n');
+    lines.forEach((ln,li)=>ctxN.fillText(ln,rg.x*w,rg.y*h+li*13));
+  }
+
+  // edges -- draw active ones prominently
+  for(const e of edges){
+    const a=neurons[e.s],b=neurons[e.d]; if(!a||!b)continue;
+    const k1=e.s+','+e.d, k2=e.d+','+e.s;
+    const intensity=activeEdges.get(k1)||activeEdges.get(k2)||0;
+    if(intensity<0.02) continue; /* skip invisible edges entirely for perf */
+    const alpha=Math.min(0.8,0.08+intensity*0.7);
+    const lw=0.5+intensity*3;
+    /* color by type: blue for exc, red for inh */
+    const c1=activeEdges.get(k1)||0, c2=activeEdges.get(k2)||0;
+    ctxN.strokeStyle=`rgba(100,180,255,${alpha})`;
+    ctxN.lineWidth=lw;
+    ctxN.beginPath(); ctxN.moveTo(a.x*w,a.y*h); ctxN.lineTo(b.x*w,b.y*h); ctxN.stroke();
+  }
+
+  // neurons -- bigger, brighter glow
+  for(let i=0;i<neurons.length;i++){
+    const n=neurons[i], cx=n.x*w, cy=n.y*h;
+    const col=CLS[n.cls]||CLS.unknown;
+    let b=n.bri;
+    if(n._flash){b=Math.max(b,n._flash);n._flash*=0.90;if(n._flash<0.03)n._flash=0;}
+    // glow halo -- dramatic
+    if(b>0.02){
+      const glowR=R*(1.5+b*4);
+      const grad=ctxN.createRadialGradient(cx,cy,R*0.3,cx,cy,glowR);
+      const gc=`rgba(${col.r*255|0},${col.g*255|0},${col.b*255|0},`;
+      grad.addColorStop(0,gc+(0.6*b)+')'); grad.addColorStop(0.4,gc+(0.3*b)+')'); grad.addColorStop(1,gc+'0)');
+      ctxN.fillStyle=grad; ctxN.beginPath(); ctxN.arc(cx,cy,glowR,0,Math.PI*2); ctxN.fill();
+    }
+    // core dot
+    const lum=0.10+b*0.90;
+    ctxN.fillStyle=`rgb(${col.r*lum*255|0},${col.g*lum*255|0},${col.b*lum*255|0})`;
+    ctxN.beginPath(); ctxN.arc(cx,cy,R,0,Math.PI*2); ctxN.fill();
+    // bright center for active neurons
+    if(b>0.3){
+      ctxN.fillStyle=`rgba(255,255,255,${b*0.4})`;
+      ctxN.beginPath(); ctxN.arc(cx,cy,R*0.5,0,Math.PI*2); ctxN.fill();
+    }
+    if(i===hoverIdx){ctxN.strokeStyle='#fff';ctxN.lineWidth=1.5;ctxN.beginPath();ctxN.arc(cx,cy,R+3,0,Math.PI*2);ctxN.stroke();}
+  }
+}
+
+function drawEnv(){
+  const w=cE.width/devicePixelRatio, h=cE.height/devicePixelRatio;
+  ctxE.fillStyle='#0a0a1e'; ctxE.fillRect(0,0,w,h);
+  if(!hasEnv||!envState)return;
+  const sx=w/arenaW, sy=h/arenaH;
+
+  // chemical gradient
+  if(chemField){
+    const rows=chemField.length, cols=chemField[0].length;
+    const cw=w/cols, ch=h/rows;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const v=chemField[r][c]; if(v<0.01)continue;
+      ctxE.fillStyle=`rgba(0,180,80,${v*0.15})`;
+      ctxE.fillRect(c*cw,r*ch,cw,ch);
+    }
+  }
+  // live chemical from sources
+  if(envState.sources){
+    for(const[sx2,sy2,str,rad] of envState.sources){
+      const grad=ctxE.createRadialGradient(sx2*sx,sy2*sy,0,sx2*sx,sy2*sy,rad*sx);
+      grad.addColorStop(0,`rgba(0,220,80,${str*0.3})`);
+      grad.addColorStop(1,'rgba(0,220,80,0)');
+      ctxE.fillStyle=grad; ctxE.beginPath(); ctxE.arc(sx2*sx,sy2*sy,rad*sx,0,Math.PI*2); ctxE.fill();
+    }
+  }
+
+  // worm body
+  const segs=envState.segments;
+  if(!segs||segs.length<2)return;
+  ctxE.lineWidth=6; ctxE.lineCap='round'; ctxE.lineJoin='round';
+  // body outline
+  ctxE.strokeStyle='rgba(200,180,140,0.7)'; ctxE.lineWidth=7;
+  ctxE.beginPath(); ctxE.moveTo(segs[0][0]*sx,segs[0][1]*sy);
+  for(let i=1;i<segs.length;i++) ctxE.lineTo(segs[i][0]*sx,segs[i][1]*sy);
+  ctxE.stroke();
+
+  // muscle activation coloring per segment
+  for(let i=0;i<segs.length-1;i++){
+    const d=envState.dorsal[i]||0, v=envState.ventral[i]||0;
+    const act=Math.max(d,v);
+    const r=180+75*d|0, g=180-60*act|0, b=140-80*v|0;
+    ctxE.strokeStyle=`rgba(${r},${g},${b},${0.6+act*0.4})`;
+    ctxE.lineWidth=5+act*3;
+    ctxE.beginPath(); ctxE.moveTo(segs[i][0]*sx,segs[i][1]*sy); ctxE.lineTo(segs[i+1][0]*sx,segs[i+1][1]*sy); ctxE.stroke();
+  }
+
+  // head marker
+  ctxE.fillStyle='#ff6644'; ctxE.beginPath(); ctxE.arc(segs[0][0]*sx,segs[0][1]*sy,4,0,Math.PI*2); ctxE.fill();
+
+  // info text
+  ctxE.fillStyle='#668'; ctxE.font='10px monospace'; ctxE.textAlign='left';
+  ctxE.fillText(`speed: ${envState.speed.toFixed(1)}  chem: ${envState.chem.toFixed(2)}`,6,h-6);
+  ctxE.fillStyle='#335'; ctxE.textAlign='right';
+  ctxE.fillText('Click to add attractant',w-6,h-6);
+}
+
+function drawTimeline(){
+  const w=cT.width/devicePixelRatio, h=cT.height/devicePixelRatio;
+  ctxT.fillStyle='#0a0a18'; ctxT.fillRect(0,0,w,h);
+
+  const chartW=w*0.65;
+  const infoX=chartW+10;
+
+  // --- Activity chart ---
+  if(timeline&&timeline.times&&timeline.times.length>=2){
+    const n=timeline.times.length;
+    const pad=4;
+    function drawLine(data,color){
+      ctxT.strokeStyle=color; ctxT.lineWidth=1.5; ctxT.beginPath();
+      for(let i=0;i<n;i++){
+        const x=pad+(chartW-2*pad)*i/(n-1);
+        const y=h-pad-(h-2*pad)*Math.min(1,data[i]);
+        i===0?ctxT.moveTo(x,y):ctxT.lineTo(x,y);
+      }
+      ctxT.stroke();
+    }
+    drawLine(timeline.sensory,'rgba(74,158,255,0.8)');
+    drawLine(timeline.inter,'rgba(80,208,96,0.8)');
+    drawLine(timeline.motor,'rgba(255,152,0,0.8)');
+    ctxT.fillStyle='#446'; ctxT.font='9px sans-serif'; ctxT.textAlign='left';
+    ctxT.fillText(timeline.times[0].toFixed(0)+' ms',pad,h-2);
+    ctxT.textAlign='right';
+    ctxT.fillText(timeline.times[n-1].toFixed(0)+' ms',chartW-pad,h-2);
+  }
+
+  // --- Plasticity info ---
+  ctxT.textAlign='left'; ctxT.font='10px monospace';
+  let y=16;
+  ctxT.fillStyle='#6688aa';
+  ctxT.fillText('LEARNING & HABITUATION',infoX,y); y+=16;
+  if(plasticity){
+    ctxT.fillStyle='#8ac';
+    ctxT.fillText(`Synapses: ${plasticity.n_total}`,infoX,y); y+=13;
+    const strengthened=plasticity.n_strengthened||0;
+    const weakened=plasticity.n_weakened||0;
+    const habituated=plasticity.n_habituated||0;
+    ctxT.fillStyle='#6c6'; ctxT.fillText(`Strengthened: ${strengthened}`,infoX,y); y+=13;
+    ctxT.fillStyle='#c66'; ctxT.fillText(`Weakened: ${weakened}`,infoX,y); y+=13;
+    ctxT.fillStyle='#ca6'; ctxT.fillText(`Habituated: ${habituated}`,infoX,y); y+=13;
+    const eff=plasticity.efficacy_mean||1;
+    ctxT.fillStyle='#889';
+    ctxT.fillText(`Avg efficacy: ${(eff*100).toFixed(0)}%`,infoX,y); y+=13;
+    const wc=plasticity.weight_change_mean||0;
+    ctxT.fillText(`Avg weight chg: ${wc>=0?'+':''}${wc.toFixed(4)}`,infoX,y);
+  } else {
+    ctxT.fillStyle='#446'; ctxT.fillText('Waiting...',infoX,y);
+  }
+}
+
+function draw(){
+  drawNeural(); drawEnv(); drawTimeline();
+  clock.textContent=simTime.toFixed(2)+' ms | step '+simStep;
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

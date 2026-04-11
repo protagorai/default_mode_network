@@ -5,7 +5,7 @@ Provides high-level interface for building, simulating, and analyzing
 C. elegans neural networks with easy connectivity management.
 """
 
-from typing import Dict, List, Optional, Tuple, Any, Union
+from typing import Callable, Dict, List, Optional, Tuple, Any, Union
 from enum import Enum
 from dataclasses import dataclass, field
 import numpy as np
@@ -38,18 +38,61 @@ class SimulationState(Enum):
 
 
 @dataclass
+class PlasticityConfig:
+    """Configuration for synaptic plasticity and habituation."""
+    enable_stdp: bool = False
+    stdp_learning_rate: float = 0.0003
+    stdp_tau_trace: float = 20.0        # ms, eligibility trace time constant
+    stdp_w_min: float = 0.05            # nS, minimum synapse weight
+    stdp_w_max_factor: float = 3.0      # max weight = initial * factor
+    stdp_update_interval: int = 100     # apply STDP every N steps
+
+    enable_habituation: bool = False
+    habituation_depression_rate: float = 0.002
+    habituation_recovery_rate: float = 0.0005
+    habituation_floor: float = 0.1      # minimum efficacy
+
+
+@dataclass
+class DMNConfig:
+    """Configuration for default mode network baseline activity."""
+    enabled: bool = False
+    mode: str = "oscillator"            # "oscillator" | "recurrent"
+    amplitude: float = 35.0             # pA, current injection strength
+    frequency: float = 0.08             # oscillation frequency (kHz for oscillator mode)
+    noise_std: float = 0.4
+    target_class: str = "interneuron"   # which neuron class receives DMN input
+
+    # Recurrent mode: self-sustaining via mutual excitation
+    recurrent_boost: float = 1.5        # multiplier on intra-DMN synapse weights
+    recurrent_tau_adapt: float = 200.0  # ms, slow adaptation to prevent runaway
+
+
+@dataclass
 class SimulationConfig:
     """Configuration for network simulation."""
     dt: float = 0.01                    # Time step (ms)
     record_interval: int = 10           # Record every N steps
     progress_interval: int = 10000      # Print progress every N steps
     enable_recording: bool = True       # Record voltage traces
-    
+    plasticity: PlasticityConfig = field(default_factory=PlasticityConfig)
+    dmn: DMNConfig = field(default_factory=DMNConfig)
+
     def __post_init__(self):
         if self.dt <= 0:
             raise ValueError("Time step must be positive")
         if self.record_interval < 1:
             raise ValueError("Record interval must be >= 1")
+
+
+@dataclass
+class SimulationFrame:
+    """Lightweight snapshot of network state for real-time visualization."""
+    time_ms: float
+    step: int
+    voltages: Dict[str, float]
+    active_synapses: List[Tuple[str, str, float]] = field(default_factory=list)
+    active_gaps: List[Tuple[str, str, float]] = field(default_factory=list)
 
 
 class CElegansNetwork:
@@ -97,6 +140,9 @@ class CElegansNetwork:
         # Performance tracking
         self.simulation_start_time = None
         self.simulation_end_time = None
+        
+        # Step callbacks for live visualization
+        self.step_callbacks: List[Callable[[SimulationFrame], None]] = []
         
     # ========================================================================
     # Neuron Management
@@ -414,29 +460,71 @@ class CElegansNetwork:
                   f"({steps/elapsed:.0f} steps/s, "
                   f"{duration/elapsed:.1f}× real-time)")
     
+    def register_callback(self, fn: Callable[[SimulationFrame], None]) -> None:
+        """Register a function to be called with a SimulationFrame on each recorded step."""
+        if fn not in self.step_callbacks:
+            self.step_callbacks.append(fn)
+
+    def unregister_callback(self, fn: Callable[[SimulationFrame], None]) -> None:
+        """Remove a previously registered step callback."""
+        self.step_callbacks = [cb for cb in self.step_callbacks if cb is not fn]
+
+    def _build_frame(self) -> SimulationFrame:
+        """Build a SimulationFrame snapshot of the current network state."""
+        voltages = {nid: n.voltage for nid, n in self.neurons.items()}
+
+        active_synapses = []
+        for syn in self.chemical_synapses.values():
+            if abs(syn.I_syn) > 0.01:
+                active_synapses.append((
+                    syn.presynaptic_neuron_id,
+                    syn.postsynaptic_neuron_id,
+                    syn.I_syn,
+                ))
+
+        active_gaps = []
+        for gap in self.gap_junctions.values():
+            current = getattr(gap, "I_gap", 0.0)
+            if abs(current) > 0.01:
+                active_gaps.append((
+                    gap.presynaptic_neuron_id,
+                    gap.postsynaptic_neuron_id,
+                    current,
+                ))
+
+        return SimulationFrame(
+            time_ms=self.current_time,
+            step=self.step_count,
+            voltages=voltages,
+            active_synapses=active_synapses,
+            active_gaps=active_gaps,
+        )
+
     def _step(self, dt: float) -> None:
         """Execute one simulation step."""
-        # Update gating variables and integrate voltages
         for neuron in self.neurons.values():
             neuron.update(dt)
         
-        # Update synapses
         for synapse in self.chemical_synapses.values():
             synapse.update(dt)
         
-        # Update gap junctions
         for gap in self.gap_junctions.values():
             gap.update(dt)
         
-        # Record
-        if self.config.enable_recording and self.step_count % self.config.record_interval == 0:
+        is_record_step = self.step_count % self.config.record_interval == 0
+
+        if self.config.enable_recording and is_record_step:
             self.recorded_times.append(self.current_time)
             for neuron_id, neuron in self.neurons.items():
                 self.voltage_history[neuron_id].append(
                     (self.current_time, neuron.voltage)
                 )
         
-        # Update state
+        if self.step_callbacks and is_record_step:
+            frame = self._build_frame()
+            for cb in self.step_callbacks:
+                cb(frame)
+        
         self.current_time += dt
         self.step_count += 1
     

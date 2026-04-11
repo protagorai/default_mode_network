@@ -43,6 +43,17 @@ from sdmn.neurons import (
 # Network building and analysis
 from sdmn.networks import NetworkBuilder, NetworkTopology
 
+# C. elegans analysis tools
+from sdmn.analysis import (
+    TopologyAnalyzer,
+    DynamicsAnalyzer,
+    BehaviorDetector,
+    NetworkVisualizer,
+)
+
+# Live visualization
+from sdmn.visualization import LiveVisualizer
+
 # Monitoring and data collection
 from sdmn.probes import (
     BaseProbe,
@@ -78,6 +89,13 @@ __all__ = [
     # Network building
     "NetworkBuilder",
     "NetworkTopology",
+    # Analysis
+    "TopologyAnalyzer",
+    "DynamicsAnalyzer",
+    "BehaviorDetector",
+    "NetworkVisualizer",
+    # Live visualization
+    "LiveVisualizer",
     # Monitoring
     "BaseProbe",
     "ProbeType",

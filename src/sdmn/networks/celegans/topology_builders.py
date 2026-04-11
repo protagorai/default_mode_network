@@ -4,7 +4,7 @@ Topology builders for C. elegans neural networks.
 Provides automated generation of different network architectures:
 - Uniform/Regular topology (nearest neighbors)
 - Small-world topology (Watts-Strogatz with rewiring)
-- Random topology (Erdős-Rényi)
+- Random topology (Erdos-Renyi)
 
 These builders enable testing the hypothesis that uniform networks perform
 poorly while small-world networks enable emergent behavior.
@@ -196,6 +196,30 @@ class BaseTopologyBuilder(ABC):
         # Ensure at least 1 connection
         return max(1, k)
     
+    def _get_neuron_id(self, index: int) -> str:
+        """
+        Get neuron ID for a given index based on neuron_class configuration.
+
+        Args:
+            index: Neuron index (0-based)
+
+        Returns:
+            Neuron ID string
+        """
+        if self.params.neuron_class == 'mixed':
+            n_sensory = int(self.params.n_neurons * self.params.sensory_fraction)
+            n_motor = int(self.params.n_neurons * self.params.motor_fraction)
+            n_inter = self.params.n_neurons - n_sensory - n_motor
+
+            if index < n_sensory:
+                return f"S{index}"
+            elif index < n_sensory + n_inter:
+                return f"I{index - n_sensory}"
+            else:
+                return f"M{index - n_sensory - n_inter}"
+        else:
+            return f"N{index}"
+
     def get_topology_stats(self) -> Dict[str, Any]:
         """
         Get statistics about the built topology.
@@ -294,21 +318,6 @@ class UniformTopologyBuilder(BaseTopologyBuilder):
         print(f"  Topology: Uniform (regular ring)")
         
         return network
-    
-    def _get_neuron_id(self, index: int) -> str:
-        """Get neuron ID for given index."""
-        if self.params.neuron_class == 'mixed':
-            n_sensory = int(self.params.n_neurons * self.params.sensory_fraction)
-            n_motor = int(self.params.n_neurons * self.params.motor_fraction)
-            
-            if index < n_sensory:
-                return f"S{index}"
-            elif index < n_sensory + (self.params.n_neurons - n_sensory - n_motor):
-                return f"I{index - n_sensory}"
-            else:
-                return f"M{index - n_sensory - (self.params.n_neurons - n_sensory - n_motor)}"
-        else:
-            return f"N{index}"
 
 
 class SmallWorldBuilder(BaseTopologyBuilder):
@@ -387,40 +396,38 @@ class SmallWorldBuilder(BaseTopologyBuilder):
         # Add neurons
         self._create_neurons(network)
         
-        # Step 1: Create regular ring lattice
-        edges = []  # List of (source, target, offset)
+        # Step 1: Create regular ring lattice (undirected edges stored once)
+        undirected_edges = []  # (node_a, node_b, offset)
         
         for i in range(self.params.n_neurons):
-            # Sample connections for this neuron
             k_this = self._sample_connection_count()
-            k_forward = k_this // 2
+            k_half = k_this // 2
             
-            # Connect to k_forward nearest neighbors (forward only for ring)
-            for offset in range(1, k_forward + 1):
+            # Forward neighbors only; reverse direction added when materialising
+            for offset in range(1, k_half + 1):
                 target_idx = (i + offset) % self.params.n_neurons
-                edges.append((i, target_idx, offset))
+                undirected_edges.append((i, target_idx, offset))
         
         # Step 2: Rewire edges with probability p
         rewired_count = 0
-        existing_connections = set()  # Track to avoid duplicates
+        existing_connections = set()
         
-        for i, (source, target, offset) in enumerate(edges):
+        for i, (source, target, offset) in enumerate(undirected_edges):
             if self.rng.random() < self.rewire_prob:
-                # Rewire this edge
                 new_target = self._choose_rewire_target(source, existing_connections)
                 
                 if new_target is not None:
-                    edges[i] = (source, new_target, None)  # None = rewired
+                    undirected_edges[i] = (source, new_target, None)
                     rewired_count += 1
             
-            # Track connection
-            existing_connections.add((source, edges[i][1]))
+            existing_connections.add((source, undirected_edges[i][1]))
         
-        # Step 3: Create connections in network
-        for source, target, offset in edges:
-            source_id = self._get_neuron_id(source)
-            target_id = self._get_neuron_id(target)
-            self._add_connection(network, source_id, target_id)
+        # Step 3: Create connections (both directions for each undirected edge)
+        for node_a, node_b, _offset in undirected_edges:
+            id_a = self._get_neuron_id(node_a)
+            id_b = self._get_neuron_id(node_b)
+            self._add_connection(network, id_a, id_b)
+            self._add_connection(network, id_b, id_a)
         
         self.network = network
         
@@ -429,7 +436,8 @@ class SmallWorldBuilder(BaseTopologyBuilder):
         
         print(f"  Created: {summary['n_chemical_synapses']} chemical synapses, "
               f"{summary['n_gap_junctions']} gap junctions")
-        print(f"  Rewired: {rewired_count}/{len(edges)} edges ({rewired_count/len(edges)*100:.1f}%)")
+        n_edges = len(undirected_edges)
+        print(f"  Rewired: {rewired_count}/{n_edges} edges ({rewired_count/n_edges*100:.1f}%)")
         print(f"  Actual avg connections/neuron: {actual_avg:.1f}")
         print(f"  Topology: Small-world (Watts-Strogatz)")
         
@@ -446,25 +454,18 @@ class SmallWorldBuilder(BaseTopologyBuilder):
         Returns:
             New target index or None if can't find valid target
         """
-        # Try up to 100 times to find a valid target
         for _ in range(100):
-            # Sample distance preference
             if self.distance_decay < np.inf:
-                # Exponential distribution favors distant connections
-                # when distance_decay is large
                 distance = int(self.rng.exponential(self.distance_decay))
                 distance = min(distance, self.params.n_neurons - 1)
                 
-                # Random direction
                 if self.rng.random() < 0.5:
                     distance = -distance
                 
                 target = (source + distance) % self.params.n_neurons
             else:
-                # Uniform random
                 target = self.rng.integers(0, self.params.n_neurons)
             
-            # Check validity
             if target == source and not self.allow_self_loops:
                 continue
             if (source, target) in existing:
@@ -472,28 +473,12 @@ class SmallWorldBuilder(BaseTopologyBuilder):
             
             return target
         
-        return None  # Couldn't find valid target
-    
-    def _get_neuron_id(self, index: int) -> str:
-        """Get neuron ID for given index."""
-        if self.params.neuron_class == 'mixed':
-            n_sensory = int(self.params.n_neurons * self.params.sensory_fraction)
-            n_motor = int(self.params.n_neurons * self.params.motor_fraction)
-            n_inter = self.params.n_neurons - n_sensory - n_motor
-            
-            if index < n_sensory:
-                return f"S{index}"
-            elif index < n_sensory + n_inter:
-                return f"I{index - n_sensory}"
-            else:
-                return f"M{index - n_sensory - n_inter}"
-        else:
-            return f"N{index}"
+        return None
 
 
 class RandomTopologyBuilder(BaseTopologyBuilder):
     """
-    Build random topology network (Erdős-Rényi).
+    Build random topology network (Erdos-Renyi).
     
     Each possible connection exists with probability p.
     Can be modified with distance bias to prefer nearby or distant connections.
@@ -595,7 +580,7 @@ class RandomTopologyBuilder(BaseTopologyBuilder):
         print(f"  Created: {summary['n_chemical_synapses']} chemical synapses, "
               f"{summary['n_gap_junctions']} gap junctions")
         print(f"  Actual avg connections/neuron: {actual_avg:.1f}")
-        print(f"  Topology: Random (Erdős-Rényi with {self.distance_bias} distance bias)")
+        print(f"  Topology: Random (Erdos-Renyi with {self.distance_bias} distance bias)")
         
         return network
     
@@ -611,37 +596,124 @@ class RandomTopologyBuilder(BaseTopologyBuilder):
         """
         if self.distance_bias == 'uniform':
             return self.connection_prob
-        
         elif self.distance_bias == 'gaussian':
-            # Gaussian preference (favor nearby)
-            # P(d) = p_base * exp(-d^2 / (2*sigma^2))
             factor = np.exp(-distance**2 / (2 * self.distance_sigma**2))
             return self.connection_prob * factor
-        
         elif self.distance_bias == 'exponential':
-            # Exponential decay (favor nearby)
-            # P(d) = p_base * exp(-d / sigma)
             factor = np.exp(-distance / self.distance_sigma)
             return self.connection_prob * factor
-        
         else:
             return self.connection_prob
-    
-    def _get_neuron_id(self, index: int) -> str:
-        """Get neuron ID for given index."""
-        if self.params.neuron_class == 'mixed':
-            n_sensory = int(self.params.n_neurons * self.params.sensory_fraction)
-            n_motor = int(self.params.n_neurons * self.params.motor_fraction)
-            n_inter = self.params.n_neurons - n_sensory - n_motor
-            
-            if index < n_sensory:
-                return f"S{index}"
-            elif index < n_sensory + n_inter:
-                return f"I{index - n_sensory}"
+
+
+class ScaleFreeBuilder(BaseTopologyBuilder):
+    """
+    Build scale-free topology network using Barabasi-Albert preferential attachment.
+
+    New nodes preferentially attach to high-degree nodes, producing a
+    power-law degree distribution with prominent hub neurons.  This contrasts
+    with small-world networks (high clustering) and uniform networks (no hubs).
+
+    Parameters:
+        m: Number of edges each new node creates (controls avg degree ~2*m).
+        m0: Number of seed nodes in the initial fully-connected clique.
+
+    Example:
+        builder = ScaleFreeBuilder(
+            TopologyParameters(n_neurons=302, k_neighbors=14),
+            m=7
+        )
+        network = builder.build()
+    """
+
+    def __init__(self, params: Optional[TopologyParameters] = None,
+                 m: Optional[int] = None,
+                 m0: Optional[int] = None):
+        """
+        Initialize scale-free topology builder.
+
+        Args:
+            params: Topology parameters
+            m: Edges per new node (default: k_neighbors // 2 to approximate target avg degree)
+            m0: Seed clique size (default: m + 1)
+        """
+        if params is None:
+            params = TopologyParameters()
+        super().__init__(params)
+
+        self.m = m if m is not None else max(1, self.params.k_neighbors // 2)
+        self.m0 = m0 if m0 is not None else self.m + 1
+
+        if self.m < 1:
+            raise ValueError("m must be >= 1")
+        if self.m0 < self.m:
+            raise ValueError("m0 must be >= m")
+        if self.m0 > self.params.n_neurons:
+            raise ValueError("m0 must be <= n_neurons")
+
+    def build(self) -> CElegansNetwork:
+        """
+        Build scale-free network via Barabasi-Albert algorithm.
+
+        1. Create a fully-connected seed clique of m0 nodes.
+        2. For each remaining node, connect to m existing nodes chosen with
+           probability proportional to their current degree.
+
+        Returns:
+            Network with scale-free (power-law) degree distribution
+        """
+        print(f"\nBuilding scale-free topology network...")
+        print(f"  Neurons: {self.params.n_neurons}")
+        print(f"  Edges per new node (m): {self.m}")
+        print(f"  Seed clique size (m0): {self.m0}")
+
+        network = CElegansNetwork()
+        self._create_neurons(network)
+
+        degrees = np.zeros(self.params.n_neurons, dtype=float)
+
+        # Seed clique: fully connect m0 nodes
+        for i in range(self.m0):
+            for j in range(i + 1, self.m0):
+                src_id = self._get_neuron_id(i)
+                tgt_id = self._get_neuron_id(j)
+                self._add_connection(network, src_id, tgt_id)
+                degrees[i] += 1
+                degrees[j] += 1
+
+        # Preferential attachment for remaining nodes
+        for new_idx in range(self.m0, self.params.n_neurons):
+            total_degree = degrees[:new_idx].sum()
+            if total_degree == 0:
+                probs = np.ones(new_idx) / new_idx
             else:
-                return f"M{index - n_sensory - n_inter}"
-        else:
-            return f"N{index}"
+                probs = degrees[:new_idx] / total_degree
+
+            targets = set()
+            attempts = 0
+            while len(targets) < min(self.m, new_idx) and attempts < self.m * 20:
+                chosen = self.rng.choice(new_idx, p=probs)
+                targets.add(chosen)
+                attempts += 1
+
+            new_id = self._get_neuron_id(new_idx)
+            for t in targets:
+                tgt_id = self._get_neuron_id(t)
+                self._add_connection(network, new_id, tgt_id)
+                degrees[new_idx] += 1
+                degrees[t] += 1
+
+        self.network = network
+
+        summary = network.get_connectivity_summary()
+        actual_avg = summary['avg_synapses_per_neuron'] + summary['avg_gaps_per_neuron']
+
+        print(f"  Created: {summary['n_chemical_synapses']} chemical synapses, "
+              f"{summary['n_gap_junctions']} gap junctions")
+        print(f"  Actual avg connections/neuron: {actual_avg:.1f}")
+        print(f"  Topology: Scale-free (Barabási-Albert)")
+
+        return network
 
 
 # Convenience functions for easy usage
@@ -769,5 +841,44 @@ def build_random_network(n_neurons: int = 302,
     builder = RandomTopologyBuilder(params, connection_prob=connection_prob,
                                    distance_bias=distance_bias,
                                    distance_sigma=distance_sigma)
+    return builder.build()
+
+
+def build_scale_free_network(n_neurons: int = 302,
+                             m: Optional[int] = None,
+                             neuron_class: str = 'interneuron',
+                             weight_mean: float = 2.0,
+                             weight_std: float = 0.3,
+                             gap_prob: float = 0.15,
+                             random_seed: Optional[int] = None) -> CElegansNetwork:
+    """
+    Build scale-free topology C. elegans network (one-liner convenience function).
+
+    Args:
+        n_neurons: Number of neurons (default: 302)
+        m: Edges per new node (default: ~k/2 for avg degree ~k)
+        neuron_class: 'sensory', 'interneuron', 'motor', or 'mixed'
+        weight_mean: Mean synaptic weight in nS
+        weight_std: Std dev of synaptic weights
+        gap_prob: Probability a connection is a gap junction
+        random_seed: Random seed for reproducibility
+
+    Returns:
+        Network with scale-free (power-law) degree distribution
+
+    Example:
+        network = build_scale_free_network(n_neurons=302, m=7)
+    """
+    params = TopologyParameters(
+        n_neurons=n_neurons,
+        neuron_class=neuron_class,
+        k_neighbors=14,
+        weight_mean=weight_mean,
+        weight_std=weight_std,
+        gap_junction_prob=gap_prob,
+        random_seed=random_seed
+    )
+
+    builder = ScaleFreeBuilder(params, m=m)
     return builder.build()
 
