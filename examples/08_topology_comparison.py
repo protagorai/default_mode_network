@@ -7,7 +7,7 @@ poorly while small-world networks enable emergent behavior.
 Tests three architectures with ~300 neurons and ~14 connections each:
 1. Uniform (regular ring) - Poor performance expected
 2. Small-world (Watts-Strogatz) - Good performance expected  
-3. Random (Erdős-Rényi) - Intermediate performance expected
+3. Random (Erdos-Renyi) - Intermediate performance expected
 
 This reproduces the key finding from network science that topology matters!
 """
@@ -62,7 +62,7 @@ def example1_build_topologies():
     print(f"      Built in {elapsed:.2f} seconds")
     
     # 3. Random topology (for comparison)
-    print("\n[3/3] Random Network (Erdős-Rényi)...")
+    print("\n[3/3] Random Network (Erdos-Renyi)...")
     start = timer()
     random_net = build_random_network(
         n_neurons=302,
