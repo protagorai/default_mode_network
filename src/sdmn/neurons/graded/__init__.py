@@ -14,6 +14,21 @@ from .neuron_classes import (
     MotorNeuron,
     CElegansNeuronClass
 )
+from .multichannel_neuron import (
+    MultiChannelNeuron,
+    MultiChannelParameters,
+    ChannelParams,
+    create_awc_neuron,
+    create_rmd_neuron,
+)
+from .neuropeptide_layer import (
+    ExtrasynapticLayer,
+    NeuropeptideParams,
+    MonoamineParams,
+    create_serotonin_pathway,
+    create_dopamine_pathway,
+    create_tyramine_pathway,
+)
 
 __all__ = [
     'GradedNeuron',
@@ -24,5 +39,16 @@ __all__ = [
     'Interneuron',
     'MotorNeuron',
     'CElegansNeuronClass',
+    'MultiChannelNeuron',
+    'MultiChannelParameters',
+    'ChannelParams',
+    'create_awc_neuron',
+    'create_rmd_neuron',
+    'ExtrasynapticLayer',
+    'NeuropeptideParams',
+    'MonoamineParams',
+    'create_serotonin_pathway',
+    'create_dopamine_pathway',
+    'create_tyramine_pathway',
 ]
 

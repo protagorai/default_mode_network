@@ -1,0 +1,37 @@
+channel,parameter,value,unit,description,source
+SHL-1,gshal,2.48,nS,max conductance (RMD),Nicoletti et al. 2019 RMD.ode
+SHL-1,vashal,11.2,mV,half-activation voltage,Nicoletti et al. 2019
+SHL-1,kashal,14.1,mV,activation slope,Nicoletti et al. 2019
+SHL-1,shalsfhit,18,mV,voltage shift,Nicoletti et al. 2019
+SHL-1,power,3,,activation exponent m^3,Nicoletti et al. 2019
+SHK-1,gshak,1.1,nS,max conductance (RMD - higher than AWC),Nicoletti et al. 2019
+SHK-1,vashak,20.4,mV,half-activation,Nicoletti et al. 2019
+SHK-1,kashak,7.7,mV,activation slope,Nicoletti et al. 2019
+EGL-36,gegl36,1.3,nS,max conductance (RMD-specific K channel),Nicoletti et al. 2019
+EGL-36,va_egl36,63,mV,half-activation,Nicoletti et al. 2019
+EGL-36,ka_egl36,28.5,mV,activation slope,Nicoletti et al. 2019
+EGL-36,has_3_gates,true,,three activation gates with different time constants,Nicoletti et al. 2019
+EGL-36,t1,355,ms,slow gate time constant,Nicoletti et al. 2019
+EGL-36,t2,63,ms,medium gate time constant,Nicoletti et al. 2019
+EGL-36,t3,13,ms,fast gate time constant,Nicoletti et al. 2019
+IRK,gkir,0.2,nS,max conductance (RMD - lower than AWC),Nicoletti et al. 2019
+CCA-1,gcca1,3.1,nS,max conductance (RMD - much higher than AWC 0.7),Nicoletti et al. 2019
+CCA-1,va_cca1,-42.65,mV,half-activation,Nicoletti et al. 2019
+CCA-1,ka_cca1,1.7,mV,activation slope,Nicoletti et al. 2019
+CCA-1,note,,,T-type Ca critical for RMD bistability and oscillations,Nicoletti et al. 2019
+UNC-2,gunc2,0.9,nS,max conductance (RMD),Nicoletti et al. 2019
+UNC-2,va_unc2,-12.17,mV,half-activation,Nicoletti et al. 2019
+UNC-2,ka_unc2,3.97,mV,activation slope,Nicoletti et al. 2019
+EGL-19,gegl19,0.99,nS,max conductance (RMD - lower than AWC),Nicoletti et al. 2019
+EGL-19,va_egl19,5.6,mV,half-activation,Nicoletti et al. 2019
+EGL-19,ka_egl19,7.5,mV,activation slope,Nicoletti et al. 2019
+SLO-1_UNC2,gbk,0.3,nS,BK (RMD - higher than AWC 0.11),Nicoletti et al. 2019
+SLO-1_EGL19,gslo1,0.3,nS,BK (RMD - higher),Nicoletti et al. 2019
+SLO-2_EGL19,gbk2,0.3,nS,(RMD - higher),Nicoletti et al. 2019
+SLO-2_UNC2,gslo2,0.3,nS,(RMD - higher),Nicoletti et al. 2019
+KCNL,gca,0.06,nS,SK channel conductance,Nicoletti et al. 2019
+Leak,gleak,0.4,nS,leak conductance (RMD - higher than AWC),Nicoletti et al. 2019
+Leak,eleak,-80,mV,leak reversal,Nicoletti et al. 2019
+Nca,gnca,0.05,nS,nonselective cation leak,Nicoletti et al. 2019
+Membrane,C_m,1.2,pF,membrane capacitance (RMD - smaller cell),Nicoletti et al. 2019
+Ca_dynamics,vol,5.65,um^3,cell volume (RMD from NeuroMorpho),Nicoletti et al. 2019

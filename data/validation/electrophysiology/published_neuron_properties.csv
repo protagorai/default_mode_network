@@ -1,0 +1,31 @@
+neuron_type,property,value,unit,condition,reference,notes
+AWCon,V_rest,-60 to -70,mV,whole-cell patch clamp,"Goodman et al. 1998",range across recordings
+AWCon,R_input,2-5,GOhm,whole-cell patch clamp,"Goodman et al. 1998",high input resistance typical of small cells
+AWCon,C_m,1.4,pF,estimated from model,"Nicoletti et al. 2019",
+AWCon,regenerative_response,bistable/sustained,,"current injection >5pA","Liu et al. 2018; Nicoletti et al. 2019",calcium-mediated plateau
+AWA,V_rest,-60,mV,whole-cell patch clamp,"Liu et al. 2018",
+AWA,action_potential,calcium-mediated,,"odor stimulation","Liu et al. 2018",all-or-none calcium spikes
+AWA,spike_amplitude,40-50,mV,,"Liu et al. 2018",
+AWA,spike_duration,100-500,ms,,"Liu et al. 2018",much slower than Na+ spikes
+RMD,V_rest,-70,mV,whole-cell patch clamp,"Nicoletti et al. 2019",
+RMD,C_m,1.2,pF,estimated from model,"Nicoletti et al. 2019",smaller cell than AWC
+RMD,bistable_regime,yes,,"specific I_inject range","Nicoletti et al. 2019",CCA-1 T-type Ca critical
+RMD,oscillation_freq,0.5-5,Hz,sustained oscillations,"Nicoletti et al. 2019",
+ASER,V_rest,-55 to -65,mV,,"Goodman et al. 1998",
+ASER,salt_response,graded hyperpolarization,,salt decrease,"Suzuki et al. 2008",
+ASEL,V_rest,-55 to -65,mV,,"Goodman et al. 1998",
+ASEL,salt_response,graded depolarization,,salt increase,"Suzuki et al. 2008",asymmetric to ASER
+AFD,V_rest,-60,mV,,"Ramot et al. 2008",
+AFD,thermosensory_response,oscillatory,,temperature change,"Clark et al. 2006; Ramot et al. 2008",
+ASH,V_rest,-55 to -60,mV,,"Goodman et al. 1998",polymodal nociceptor
+ASH,stimulus_response,sustained plateau,,noxious stimulus,"Mellem et al. 2002",
+AIY,V_rest,-60,mV,,"Clark et al. 2006",first-layer interneuron
+AIY,Ca_transient_dynamics,fast on/slow off,,AFD input,"Clark et al. 2006",
+AVA,V_rest,-65,mV,estimated,,command interneuron for backward locomotion
+AVB,V_rest,-65,mV,estimated,,command interneuron for forward locomotion
+body_wall_muscle,V_rest,-20 to -30,mV,,"Richmond & Jorgensen 1999",unusually depolarized resting potential
+body_wall_muscle,GABA_E_rev,-30 to -40,mV,,"Bamber et al. 1999; Richmond & Jorgensen 1999",NOT -75 mV
+body_wall_muscle,ACh_E_rev,-5 to 0,mV,,"Richmond & Jorgensen 1999",
+generic_neuron,tau_m,3-20,ms,,"Goodman et al. 1998",wide range across types
+generic_neuron,R_input,1-10,GOhm,,"Goodman et al. 1998",very high due to small size
+generic_neuron,C_m,1-4,pF,,"Goodman et al. 1998; Nicoletti et al. 2019",

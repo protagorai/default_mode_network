@@ -1,0 +1,13 @@
+receptor_family,gene_examples,neurotransmitter,ion_selectivity,reversal_mv,sign,notes,references
+nAChR_levamisole,"unc-38,unc-29,unc-63,lev-1,lev-8",acetylcholine,cation (Na+/K+/Ca2+),-10 to 0,excitatory,major excitatory ACh receptor at NMJ,"Richmond & Jorgensen 1999; Fleming et al. 1997"
+nAChR_nicotine,"acr-16",acetylcholine,cation,-10 to 0,excitatory,rapidly desensitizing nicotinic receptor,"Touroutine et al. 2005; Francis et al. 2005"
+ACR_inhibitory,"acc-1,acc-2,acc-3,acc-4",acetylcholine,chloride (Cl-),-30 to -40,inhibitory,ACh-gated chloride channels unique to invertebrates,"Putrenko et al. 2005; Ringstad et al. 2009"
+GABA_A,"unc-49",GABA,chloride (Cl-),-30 to -40,inhibitory,UNC-49 GABA-A receptor at NMJ,"Bamber et al. 1999; Richmond & Jorgensen 1999"
+GABA_EXP-1,"exp-1",GABA,cation,-10 to 0,excitatory,excitatory GABA receptor (cation-permeable),"Beg & Bhatt 2003"
+GluCl,"avr-14,avr-15,glc-1,glc-2,glc-3,glc-4",glutamate,chloride (Cl-),-60 to -40,inhibitory,glutamate-gated Cl channels - makes Glu inhibitory,"Dent et al. 2006; Cully et al. 1994"
+iGluR_AMPA,"glr-1,glr-2,glr-4,glr-5",glutamate,cation,-10 to 0,excitatory,ionotropic glutamate receptors (AMPA-like),"Hart et al. 1995; Maricq et al. 1995; Mellem et al. 2002"
+iGluR_NMDA,"nmr-1,nmr-2",glutamate,cation,-10 to 0,excitatory,NMDA-type glutamate receptors,"Brockie et al. 2001"
+5HT_receptor,"ser-1,ser-4,ser-5,ser-7",serotonin,metabotropic,NA,modulatory,GPCRs - modulate excitability not direct current,"Olde & McCombie 1997; Hobson et al. 2006"
+DA_receptor,"dop-1,dop-2,dop-3,dop-4",dopamine,metabotropic,NA,modulatory,GPCRs - D1-like (dop-1) D2-like (dop-2/3),"Chase et al. 2004; Sugiura et al. 2005"
+TA_receptor,"ser-2,tyra-2,tyra-3",tyramine,metabotropic,NA,modulatory,tyramine GPCRs,"Rex et al. 2004; Wragg et al. 2007"
+OA_receptor,"ser-3,ser-6",octopamine,metabotropic,NA,modulatory,octopamine GPCRs,"Suo et al. 2006; Mills et al. 2012"

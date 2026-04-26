@@ -1,0 +1,70 @@
+channel,parameter,value,unit,description,source
+SHL-1,gshal,2.9,nS,max conductance,Nicoletti et al. 2019 AWC.ode
+SHL-1,vashal,11.2,mV,half-activation voltage (before shift),Nicoletti et al. 2019
+SHL-1,kashal,14.1,mV,activation slope,Nicoletti et al. 2019
+SHL-1,shalsfhit,18,mV,voltage shift applied to activation,Nicoletti et al. 2019
+SHL-1,vishal,-33.1,mV,half-inactivation voltage,Nicoletti et al. 2019
+SHL-1,kishal,8.3,mV,inactivation slope,Nicoletti et al. 2019
+SHL-1,power,3,,activation exponent m^3,Nicoletti et al. 2019
+SHL-1,has_inactivation,true,,fast + slow inactivation (0.7*hf + 0.3*hs),Nicoletti et al. 2019
+KVS-1,gkvs1,0.8,nS,max conductance,Nicoletti et al. 2019
+KVS-1,va_kvs1,57.1,mV,half-activation (before shift),Nicoletti et al. 2019
+KVS-1,ka_kvs1,25,mV,activation slope,Nicoletti et al. 2019
+KVS-1,skvs1,30,mV,voltage shift,Nicoletti et al. 2019
+KVS-1,vi_kvs1,47.3,mV,half-inactivation,Nicoletti et al. 2019
+KVS-1,ki_kvs1,11.1,mV,inactivation slope,Nicoletti et al. 2019
+SHK-1,gshak,0.1,nS,max conductance (AWC),Nicoletti et al. 2019
+SHK-1,vashak,20.4,mV,half-activation,Nicoletti et al. 2019
+SHK-1,kashak,7.7,mV,activation slope,Nicoletti et al. 2019
+SHK-1,vishak,-6.95,mV,half-inactivation,Nicoletti et al. 2019
+SHK-1,kishak,5.8,mV,inactivation slope,Nicoletti et al. 2019
+SHK-1,pthshak,1400,ms,inactivation time constant,Nicoletti et al. 2019
+KQT-3,gkqt3,0.55,nS,max conductance,Nicoletti et al. 2019
+KQT-3,va_kqt3,-12.6726,mV,half-activation,Nicoletti et al. 2019
+KQT-3,ka_kqt3,15.8008,mV,activation slope,Nicoletti et al. 2019
+KQT-3,has_w_gate,true,,additional w gating variable,Nicoletti et al. 2019
+KQT-3,has_s_gate,true,,additional s slow gating,Nicoletti et al. 2019
+EGL-2,gegl2,0.85,nS,max conductance,Nicoletti et al. 2019
+EGL-2,va_egl2,-6.8594,mV,half-activation,Nicoletti et al. 2019
+EGL-2,ka_egl2,14.9131,mV,activation slope,Nicoletti et al. 2019
+EGL-2,has_inactivation,false,,no inactivation gate,Nicoletti et al. 2019
+IRK,gkir,0.65,nS,max conductance (AWC),Nicoletti et al. 2019
+IRK,va_kir,-52,mV,half-activation (shifted +30),Nicoletti et al. 2019
+IRK,ka_kir,13,mV,activation slope,Nicoletti et al. 2019
+IRK,inward_rectifier,true,,conducts inward current below E_K,Nicoletti et al. 2019
+CCA-1,gcca1,0.7,nS,max conductance (AWC; T-type Ca),Nicoletti et al. 2019
+CCA-1,va_cca1,-42.65,mV,half-activation,Nicoletti et al. 2019
+CCA-1,ka_cca1,1.7,mV,activation slope (steep),Nicoletti et al. 2019
+CCA-1,sscca1,15,mV,shift for Ca activation,Nicoletti et al. 2019
+CCA-1,vi_cca1,-58,mV,half-inactivation,Nicoletti et al. 2019
+CCA-1,ki_cca1,7,mV,inactivation slope,Nicoletti et al. 2019
+CCA-1,power,2,,activation exponent m^2,Nicoletti et al. 2019
+UNC-2,gunc2,1.0,nS,max conductance (AWC; N/P/Q-type Ca),Nicoletti et al. 2019
+UNC-2,va_unc2,-12.17,mV,half-activation (before shift),Nicoletti et al. 2019
+UNC-2,ka_unc2,3.97,mV,activation slope,Nicoletti et al. 2019
+UNC-2,stm2,25,mV,activation voltage shift,Nicoletti et al. 2019
+UNC-2,vi_unc2,-52.47,mV,half-inactivation,Nicoletti et al. 2019
+UNC-2,ki_unc2,5.6,mV,inactivation slope,Nicoletti et al. 2019
+EGL-19,gegl19,1.55,nS,max conductance (AWC; L-type Ca),Nicoletti et al. 2019
+EGL-19,va_egl19,5.6,mV,half-activation (before shift),Nicoletti et al. 2019
+EGL-19,ka_egl19,7.5,mV,activation slope,Nicoletti et al. 2019
+EGL-19,stm19,10,mV,activation shift,Nicoletti et al. 2019
+EGL-19,has_slow_inactivation,true,,slow inactivation with complex curve,Nicoletti et al. 2019
+SLO-1_UNC2,gbk,0.11,nS,BK channel conductance (coupled to UNC-2),Nicoletti et al. 2019
+SLO-1_EGL19,gslo1,0.11,nS,BK channel conductance (coupled to EGL-19),Nicoletti et al. 2019
+SLO-2_EGL19,gbk2,0.1,nS,conductance (coupled to EGL-19),Nicoletti et al. 2019
+SLO-2_UNC2,gslo2,0.1,nS,conductance (coupled to UNC-2),Nicoletti et al. 2019
+KCNL,gca,0.06,nS,SK channel conductance,Nicoletti et al. 2019
+KCNL,k_sk2,0.00033,mM,Ca half-activation,Nicoletti et al. 2019
+KCNL,t_sk,6.3,ms,activation time constant,Nicoletti et al. 2019
+Leak,gleak,0.27,nS,leak conductance (AWC),Nicoletti et al. 2019
+Leak,eleak,-80,mV,leak reversal,Nicoletti et al. 2019
+Nca,gnca,0.055,nS,nonselective cation leak,Nicoletti et al. 2019
+Nca,ena,30,mV,Na reversal,Nicoletti et al. 2019
+Membrane,C_m,1.4,pF,membrane capacitance (AWC),Nicoletti et al. 2019
+Membrane,ek,-80,mV,potassium reversal,Nicoletti et al. 2019
+Membrane,eca,60,mV,calcium reversal,Nicoletti et al. 2019
+Ca_dynamics,fca,0.001,,free calcium fraction,Nicoletti et al. 2019
+Ca_dynamics,t_ca,50,ms,calcium removal time constant,Nicoletti et al. 2019
+Ca_dynamics,vol,31.16,um^3,cell volume (AWC from NeuroMorpho),Nicoletti et al. 2019
+Ca_dynamics,ca_rest,0.05e-3,mM,resting [Ca] background,Nicoletti et al. 2019

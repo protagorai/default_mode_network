@@ -148,25 +148,46 @@ class WormEnvironment:
         neural_drive = (mean_d + mean_v) * 0.5
         neural_turn = (mean_d - mean_v) * 3.0
 
-        # Gradient-based chemotaxis: turn toward strongest chemical source
-        chem_turn = 0.0
+        # Gradient-based steering: attract to chemicals/food, repel from pain
+        env_turn = 0.0
         hx, hy = self._x, self._y
-        for src in self.chemical_sources:
-            dx = src.x - hx
-            dy = src.y - hy
+
+        def _angle_force(tx, ty, radius, strength, attractive=True):
+            dx = tx - hx
+            dy = ty - hy
             dist = math.hypot(dx, dy)
-            if dist < src.radius and dist > 1:
-                angle_to_src = math.atan2(dy, dx)
-                angle_diff = angle_to_src - self._heading
+            if dist < radius and dist > 1:
+                angle_to = math.atan2(dy, dx)
+                angle_diff = angle_to - self._heading
                 while angle_diff > math.pi: angle_diff -= 2 * math.pi
                 while angle_diff < -math.pi: angle_diff += 2 * math.pi
-                strength = src.strength * (1.0 - dist / src.radius)
-                chem_turn += angle_diff * strength * 0.5
+                prox = strength * (1.0 - dist / radius)
+                sign = 1.0 if attractive else -1.0
+                return angle_diff * prox * sign
+            return 0.0
+
+        for src in self.chemical_sources:
+            env_turn += _angle_force(src.x, src.y, src.radius, src.strength * 0.5, True)
+
+        for food in self.food_sources:
+            if food.amount > 5:
+                env_turn += _angle_force(food.x, food.y, food.radius * 1.5,
+                                         (food.amount / 100) * 0.8, True)
+
+        for pz in self.pain_zones:
+            env_turn += _angle_force(pz.x, pz.y, pz.radius * 1.3,
+                                     pz.intensity * 2.0, False)
 
         dt_s = dt_ms / 1000.0
         base_speed = 15.0
-        self._speed = base_speed + neural_drive * 30.0
-        self._heading += (neural_turn + chem_turn) * dt_s * 2.0
+        self._speed = (base_speed + neural_drive * 30.0) * self._speed_mod
+
+        # Pain causes reversal burst: strong pain -> reverse direction briefly
+        if self._pain_at_head > 0.3:
+            reversal_strength = min(1.0, self._pain_at_head) * 4.0
+            env_turn += (math.pi * 0.5 if env_turn >= 0 else -math.pi * 0.5) * reversal_strength * dt_s
+
+        self._heading += (neural_turn + env_turn) * dt_s * 2.0
         self._phase += (0.5 + neural_drive * 4.0) * dt_s * 2 * math.pi
 
         self._x += math.cos(self._heading) * self._speed * dt_s
@@ -215,10 +236,16 @@ class WormEnvironment:
                      "AWBL", "AWBR", "ADFL", "ADFR"]:
             currents[nid] = chem_current
 
-        # Nociceptive: ASH detects pain
-        pain_current = self._pain_at_head * 60.0
+        # Nociceptive: ASH detects pain -- strong signal
+        pain_current = self._pain_at_head * 100.0
         for nid in ["ASHL", "ASHR"]:
             currents[nid] = pain_current
+
+        # Pain activates backward command interneurons (AVA/AVD) for reversal
+        if self._pain_at_head > 0.1:
+            reversal_current = self._pain_at_head * 40.0
+            for nid in ["AVAL", "AVAR", "AVDL", "AVDR"]:
+                currents[nid] = currents.get(nid, 0) + reversal_current
 
         # Dopamine neurons: CEP/ADE/PDE fire when detecting food
         da_food_current = self._food_at_head * 50.0

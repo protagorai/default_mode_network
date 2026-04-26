@@ -1,0 +1,13 @@
+presynaptic_nt,postsynaptic_receptor_family,sign,E_rev_mV,confidence,notes
+acetylcholine,nAChR_levamisole,excitatory,-5,high,standard excitatory NMJ transmission
+acetylcholine,nAChR_nicotine,excitatory,-5,high,rapidly desensitizing
+acetylcholine,ACR_inhibitory,inhibitory,-35,moderate,ACh-gated Cl- channels present in some neurons
+GABA,GABA_A,inhibitory,-35,high,standard inhibitory (UNC-49 at NMJ)
+GABA,GABA_EXP-1,excitatory,-5,moderate,excitatory GABA via EXP-1 cation channel
+glutamate,GluCl,inhibitory,-50,high,glutamate-gated Cl- channel - CRITICAL for C. elegans
+glutamate,iGluR_AMPA,excitatory,-5,high,standard ionotropic excitatory
+glutamate,iGluR_NMDA,excitatory,-5,high,NMDA-type requires depolarization + glutamate
+serotonin,5HT_receptor,modulatory,NA,high,GPCR-mediated neuromodulation
+dopamine,DA_receptor,modulatory,NA,high,GPCR-mediated neuromodulation
+tyramine,TA_receptor,modulatory,NA,high,GPCR-mediated neuromodulation
+octopamine,OA_receptor,modulatory,NA,moderate,GPCR-mediated neuromodulation

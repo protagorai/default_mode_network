@@ -1,6 +1,6 @@
 # SDMN Development Status
 
-**Last updated:** April 11, 2026
+**Last updated:** April 12, 2026
 **Test status:** 138 tests passing across 6 test files
 
 ---
@@ -18,7 +18,9 @@ src/sdmn/
 │   └── graded/                 # C. elegans graded-potential neurons
 │       ├── graded_neuron.py    # GradedNeuron base (RK4/Euler, conductance-based)
 │       ├── celegans_neuron.py  # CElegansNeuron (Ca/K/KCa channels)
-│       └── neuron_classes.py   # SensoryNeuron, Interneuron, MotorNeuron
+│       ├── neuron_classes.py   # SensoryNeuron, Interneuron, MotorNeuron
+│       ├── multichannel_neuron.py  # MultiChannelNeuron (per-type ion channel complements)
+│       └── neuropeptide_layer.py   # ExtrasynapticLayer (neuropeptide/monoamine signaling)
 ├── synapses/
 │   ├── graded_synapse.py       # GradedChemicalSynapse (voltage-dependent release)
 │   └── gap_junction.py         # GapJunction (bidirectional electrical coupling)
@@ -27,13 +29,17 @@ src/sdmn/
 │   └── celegans/
 │       ├── network_manager.py  # CElegansNetwork, SimulationConfig, PlasticityConfig, DMNConfig
 │       ├── topology_builders.py # Uniform, SmallWorld, Random, ScaleFree builders
-│       └── connectome_loader.py # Real connectome CSV loader + network builder
+│       ├── connectome_loader.py # Real connectome CSV loader + network builder
+│       └── synapse_sign_predictor.py # Gene-expression-based synapse sign prediction
 ├── probes/                     # VoltageProbe, SpikeProbe, PopulationActivityProbe, etc.
 ├── analysis/
 │   ├── topology.py             # TopologyAnalyzer (graph metrics via networkx)
 │   ├── dynamics.py             # DynamicsAnalyzer (spectral, PCA, sync, info theory)
 │   ├── behavior.py             # BehaviorDetector (locomotion, reversals, states)
 │   └── visualization.py        # NetworkVisualizer (static matplotlib plots)
+├── validation/
+│   ├── single_neuron.py        # SingleNeuronValidator (vs published electrophysiology)
+│   └── network_validation.py   # NetworkValidator (vs Randi atlas, Kato dynamics)
 ├── visualization/
 │   ├── live_visualizer.py      # LiveVisualizer controller (threading, speed, frames)
 │   ├── browser_backend.py      # Starlette + WebSocket server for browser rendering
@@ -371,4 +377,24 @@ NEW  examples/10_live_visualization.py
 NEW  tests/test_live_visualizer.py, test_visualization_integration.py, test_plasticity.py
 MOD  src/sdmn/networks/celegans/network_manager.py (SimulationFrame, callbacks, PlasticityConfig, DMNConfig)
 MOD  pyproject.toml (websockets dep)
+```
+
+### Phase 8: Biological Plausibility & Validation (April 12, 2026)
+```
+NEW  src/sdmn/neurons/graded/multichannel_neuron.py (MultiChannelNeuron, AWC/RMD factories)
+NEW  src/sdmn/neurons/graded/neuropeptide_layer.py (ExtrasynapticLayer, monoamine pathways)
+NEW  src/sdmn/networks/celegans/synapse_sign_predictor.py (gene-expression-based sign prediction)
+NEW  src/sdmn/validation/__init__.py, single_neuron.py, network_validation.py
+NEW  data/references/REFERENCE_CATALOG.md (complete bibliography with 30+ papers)
+NEW  data/validation/neurotransmitters/celegans_neurotransmitter_map.csv (~180 neurons)
+NEW  data/validation/neurotransmitters/celegans_receptor_reversal_potentials.csv
+NEW  data/validation/neurotransmitters/synapse_sign_rules.csv
+NEW  data/validation/neuron_models/nicoletti_awc_parameters.csv (from Nicoletti 2019 ODE)
+NEW  data/validation/neuron_models/nicoletti_rmd_parameters.csv (from Nicoletti 2019 ODE)
+NEW  data/validation/electrophysiology/published_neuron_properties.csv
+NEW  data/validation/functional_atlas/README.md (Randi atlas integration guide)
+NEW  docs/BIOLOGICAL_PLAUSIBILITY_ANALYSIS.md (criticism analysis + validation strategy)
+NEW  docs/IMPLEMENTATION_PLAN.md (7-phase improvement plan with task tracking)
+MOD  src/sdmn/neurons/graded/__init__.py (export new models)
+MOD  docs/DEVELOPMENT_STATUS.md (updated architecture, file inventory)
 ```
