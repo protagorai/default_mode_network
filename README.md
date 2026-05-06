@@ -221,6 +221,15 @@ See [`scripts/README.md`](scripts/README.md) for detailed comparison.
 
 ## Architecture
 
+### Two simulations
+
+This project hosts two distinct concepts that both wear the word "simulation":
+
+- **Substrate simulation engine** — the numerical integrator described below in "Core Components". It advances neuron voltages, propagates spikes, and applies synaptic kinetics. It is what runs an entity such as a C. elegans connectome.
+- **Inner simulation** — the emergent predictive process that a running entity performs *on top of* the substrate: a continuously-updated generative model of body and world, distributed across many sub-simulators at many levels of abstraction, with focus shifting between them and measurable mismatch signals whenever expectation and reality part ways.
+
+See [`docs/TWO_SIMULATIONS.md`](docs/TWO_SIMULATIONS.md) for the concept split and [`docs/plan/inner_simulation_architecture.md`](docs/plan/inner_simulation_architecture.md) for the full design of the inner simulation.
+
 ### Core Components
 
 - **SimulationEngine**: Main simulation coordinator with time management and event processing

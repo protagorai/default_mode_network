@@ -45,6 +45,8 @@ Nothing here is committed — it's a place to think out loud.
 
 ## Intrinsic Simulation / World Model & Predictive Coding
 
+> **Status (Apr 2026):** The intuition in this section has been formalized as a first-class architectural concept. See [docs/plan/inner_simulation_architecture.md](inner_simulation_architecture.md) for the full design, [docs/plan/world_simulation.md](world_simulation.md) for the dynamics-and-priors refinement (always-on substrate, stability-of-priors hierarchy, drive-driven priority field, default mode as priority-rest, C. elegans implementation path), and [docs/TWO_SIMULATIONS.md](../TWO_SIMULATIONS.md) for the concept split between the substrate engine and the inner simulation. The notes below are preserved as the informal antecedent.
+
 **Note (Feb 2026 research):** These were initially captured as separate ideas, but research shows the "intrinsic simulation" concept closely mirrors the established **predictive coding / predictive processing** framework. The core insight — that the brain runs a continuous internal model, compares predictions to percepts at multiple layers, and uses the mismatch as a learning signal — is essentially what Rao & Ballard (1999) formalized and what Friston later generalized into the **free energy principle**. This is not a weakness; it means the intuition independently converged on a well-supported theory with deep literature to draw from. The value for this project is in *implementing* it in our cyclic architecture rather than reinventing the theory.
 
 ### The Idea (as originally conceived)

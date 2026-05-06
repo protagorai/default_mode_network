@@ -1,5 +1,7 @@
 # Self-Awareness Architecture: Default Mode Networks and Self-Preservation
 
+> **Relation to the inner-simulation architecture.** The formal architecture for self-referential and predictive machinery now lives in [docs/plan/inner_simulation_architecture.md](inner_simulation_architecture.md). Under that architecture, the components introduced in this document (`SelfStateMonitor`, `RiskRewardAssessor`, `SelfReferentialDMN`, `InternalNarrativeSystem`) are specific **sub-simulators** of the inner simulation — see section 5.4 of the inner-simulation doc for the mapping. This document remains the home for the project's higher-level research framing, scientific foundation, ethical considerations, and validation goals around self-awareness. Where this document and the inner-simulation doc disagree on architectural specifics, the inner-simulation doc takes precedence; the scientific and ethical discussion here is unchanged. For the concept split between the substrate engine and the inner simulation, see [docs/TWO_SIMULATIONS.md](../TWO_SIMULATIONS.md).
+
 ## Scientific Foundation
 
 Based on neuroscience research, the [Default Mode Network (DMN)](https://en.wikipedia.org/wiki/Default_mode_network) is a large-scale brain network primarily composed of the dorsal medial prefrontal cortex, posterior cingulate cortex, precuneus, and angular gyrus. The DMN is active during:

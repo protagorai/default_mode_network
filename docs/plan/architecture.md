@@ -4,11 +4,15 @@
 
 The SDMN Framework is designed as a modular, scalable system for simulating complex spiking neural networks. The architecture emphasizes separation of concerns, extensibility, and performance optimization while maintaining scientific rigor and reproducibility.
 
+> **Two simulations.** This project hosts two distinct concepts that both wear the word "simulation": the **substrate simulation engine** (the numerical integrator described in this document) and the **inner simulation** (the emergent predictive process that a running entity performs on top of the substrate). This architecture document specifies the substrate. For the split itself, see [docs/TWO_SIMULATIONS.md](../TWO_SIMULATIONS.md). For the inner simulation's design, see [docs/plan/inner_simulation_architecture.md](inner_simulation_architecture.md).
+
 ## Core Components
 
-### 1. Simulation Engine (`src/core/`)
+### 1. Substrate Simulation Engine (`src/core/`)
 
-The heart of the framework, responsible for:
+The substrate simulation engine — the numerical integrator that advances the equations of motion of the nervous system. It knows about voltages, spikes, synaptic kinetics, and time; it does not know about predictions, errors, or policies. That higher-order vocabulary belongs to the inner simulation (see [docs/plan/inner_simulation_architecture.md](inner_simulation_architecture.md)), which is realized *inside* the substrate rather than beside it.
+
+Responsibilities of the substrate engine:
 - Time-stepped simulation management
 - Event scheduling and processing
 - State management across all network components
@@ -96,6 +100,8 @@ Implements basic self-awareness and self-preservation capabilities:
 - `RiskRewardAssessor`: Evaluates stimuli for self-preservation implications
 - `SelfReferentialDMN`: Processes information through self-referential lens
 - `InternalNarrativeSystem`: Constructs coherent sense of self over time
+
+> Under the inner-simulation architecture, these components are specific **sub-simulators** rather than a parallel subsystem. See [docs/plan/inner_simulation_architecture.md](inner_simulation_architecture.md) section 5.4 for the mapping, and [docs/plan/self_awareness_architecture.md](self_awareness_architecture.md) for the higher-level research and ethics framing.
 
 ### 6. Visualization System (`src/visualization/`)
 
