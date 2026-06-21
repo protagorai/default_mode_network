@@ -202,6 +202,16 @@ Dopamine plays a key biological role in modulating precision. Disrupted precisio
 14. **Ororbia, Alexander G. & Mali, Ankur** (2022). "The neural coding framework for learning generative models." *Nature Communications*, 13, 2064. DOI: [10.1038/s41467-022-29632-7](https://doi.org/10.1038/s41467-022-29632-7)
 15. **Salvatori, Tommaso et al.** (2024). "Learnable precision in hierarchical predictive coding implements Natural Gradient Descent." arXiv: [2111.06942](https://arxiv.org/abs/2111.06942)
 
+## Idea Graft — Cross-Instance Neural Knowledge Transfer
+
+> **Status (Jun 2026):** Formalized in its own document — see [docs/plan/idea_graft.md](idea_graft.md). The summary below is the candidate antecedent.
+
+- Given two distinct instantiations of the network (two synthetic organisms), fit a mapping between their neuronal firing **sequences** and **rates**, then define a representation *outside either instance* (an "idea" / *eidos* / interlingua) that both organisms' dynamics map to and from.
+- Use that shared representation not only to compare but to **graft**: induce learning in, or evoke latent knowledge from, the recipient's cell ensemble — carrying activity, plasticity, and dynamical state, not just static weights or a snapshot.
+- Horticultural framing: the donor fragment is the **scion**, the recipient is the **rootstock**, and a successful, self-retaining transfer is a **take**.
+- Beyond rate/sequence/correlation, the principle requires measuring population geometry (manifolds, RDMs), dynamical structure (attractors, intrinsic timescales, DSA), oscillatory/spectral and information-theoretic structure, and crucially the plasticity and neuromodulatory/precision state. The full measurement program, alignment operators (CCA, CKA, RSA, Gromov–Wasserstein OT, DSA), evaluation protocol, and falsification criteria are in [idea_graft.md](idea_graft.md).
+- Closest prior art: hyperalignment (Haxby 2011), model stitching, the Platonic Representation Hypothesis (Huh 2024), brain-to-brain interfaces (Pais-Vieira 2013), and engram/RNA transfer (Bédécarrats 2018). The novelty is the conjunction — translation *as the substrate for* transfer, carrying plasticity and dynamical state, in cyclic circuits.
+
 ## Open Questions
 
 - Is there a principled way to decide how much biological detail is "enough"? We need a framework for this, not just intuition.
